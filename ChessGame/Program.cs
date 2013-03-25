@@ -16,6 +16,8 @@ namespace ChessGame
         public Program()
             : base(800, 600)
         {
+            GL.ClearColor(Color4.Black);
+
             game = new Game();
         }
 
@@ -27,6 +29,14 @@ namespace ChessGame
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            GL.Begin(BeginMode.Points);
+            GL.Vertex3(0, 0, 0);
+            GL.End();
+
+            SwapBuffers();
         }
 
         static void Main(string[] args)

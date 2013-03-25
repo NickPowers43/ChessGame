@@ -47,12 +47,13 @@
   <ItemGroup>
     <Compile Include="Board.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GraphicsManager.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Textures\ChessPieces.png" />
+    <EmbeddedResource Include="Textures\ChessPieces.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

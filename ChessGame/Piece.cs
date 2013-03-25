@@ -11,5 +11,6 @@ namespace ChessGame
 {
     class Piece
     {
+
     }
 }
