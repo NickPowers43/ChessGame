@@ -1,6 +1,0 @@
-C:\Users\Nick\ChessGame\ChessGame\bin\Debug\ChessGame.exe
-C:\Users\Nick\ChessGame\ChessGame\bin\Debug\ChessGame.pdb
-C:\Users\Nick\ChessGame\ChessGame\obj\x86\Debug\ChessGame.exe
-C:\Users\Nick\ChessGame\ChessGame\obj\x86\Debug\ChessGame.pdb
-C:\Users\Nick\ChessGame\ChessGame\bin\Debug\OpenTK.dll
-C:\Users\Nick\ChessGame\ChessGame\bin\Debug\OpenTK.xml
