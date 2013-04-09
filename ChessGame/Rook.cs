@@ -9,6 +9,7 @@ namespace ChessGame
     {
         public Rook(int color)
         {
+		color = 1;
             
         }
 
