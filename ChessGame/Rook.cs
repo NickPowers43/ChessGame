@@ -9,7 +9,10 @@ namespace ChessGame
     {
         public Rook(int color)
         {
+<<<<<<< HEAD
 		color = 1;
+=======
+>>>>>>> master
             
         }
 
