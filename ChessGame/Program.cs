@@ -18,12 +18,14 @@ namespace ChessGame
         {
             GL.ClearColor(Color4.Black);
 
-            game = new Game();
+            //game = new Game();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
+
+            //game.Update(keyboard, mouse);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -32,9 +34,11 @@ namespace ChessGame
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.Begin(BeginMode.Points);
-            GL.Vertex3(0, 0, 0);
-            GL.End();
+            //GL.Begin(BeginMode.Points);
+            //GL.Vertex3(0, 0, 0);
+            //GL.End();
+
+            //game.Render();
 
             SwapBuffers();
         }

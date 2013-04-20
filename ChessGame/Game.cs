@@ -17,5 +17,15 @@ namespace ChessGame
         {
 
         }
+
+        public void Update()
+        {
+            //GraphicsManager.Instance.Update(board);
+        }
+
+        public void Render()
+        {
+            //GraphicsManager.Instance.Render();
+        }
     }
 }

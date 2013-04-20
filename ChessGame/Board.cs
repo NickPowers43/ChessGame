@@ -15,6 +15,10 @@ namespace ChessGame
 
         private Piece[,] pieces = new Piece[SIZE, SIZE];
 
+        //TODO: reset board method
+        //TODO: remove piece
+        //TODO: field to hold currently held piece
+
         public Board()
         {
 
