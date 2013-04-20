@@ -13,11 +13,12 @@ namespace ChessGame
     {
         const int SIZE = 8;
 
-        private Piece[,] pieces = new Piece[SIZE, SIZE];
+        public Piece[,] pieces = new Piece[SIZE, SIZE];
 
         public Board()
         {
 
         }
+
     }
 }
