@@ -58,6 +58,17 @@ namespace ChessGame
             else return false;
         }
 
+        public Piece(int color)
+        {
+
+
+        }
+
+        //move logic for the extended piece
+        public void move();
+
+        //check to make sure the move is legal
+        public bool isLegal();
        
     }
 }

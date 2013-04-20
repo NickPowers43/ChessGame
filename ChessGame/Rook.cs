@@ -7,6 +7,7 @@ namespace ChessGame
 {
     class Rook : Piece
     {
+<<<<<<< HEAD
 
         public Rook(int player, int file, int rank) 
             : base(player,file,rank)
@@ -55,5 +56,16 @@ namespace ChessGame
                 }
             }
         }
+=======
+        public Rook(int color)
+        {
+<<<<<<< HEAD
+		color = 1;
+=======
+>>>>>>> master
+            
+        }
+
+>>>>>>> b86b516b69848d3ab41c67f42695cc2f0099d046
     }
 }
