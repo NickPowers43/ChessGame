@@ -14,6 +14,13 @@ namespace ChessGame
         const int SIZE = 8;
 
         private Piece[,] pieces = new Piece[SIZE, SIZE];
+        public Piece[,] Pieces
+        {
+            get
+            {
+                return pieces;
+            }
+        }
 
         //TODO: reset board method
         //TODO: remove piece
