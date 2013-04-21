@@ -1,0 +1,19 @@
+﻿#version 140
+
+in vec2 inPosition;
+in vec2 inTexCoord;
+
+uniform vec2 offset;
+uniform float scale;
+
+//out outTexCoord;
+ 
+void main(void)
+{
+	vec2 temp = inPosition * scale;
+
+    //vec4 temp = vec4(inPosition, 0, 1);
+
+	gl_Position = temp + offset;
+	gl_TexCoord[0] = inTexCoord;
+}

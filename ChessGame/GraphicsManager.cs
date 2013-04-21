@@ -1,5 +1,5 @@
 ﻿
-#undef UNIQUE_UNIFORM_METHOD
+#define UNIQUE_UNIFORM_METHOD
 
 using System;
 using System.Collections.Generic;
@@ -29,25 +29,69 @@ namespace ChessGame
         }
 
         const float 
-            TEX_WIDTH = 512,
-            TEX_HEIGHT = 512,
+            //TEX_WIDTH = 512,
+            //TEX_HEIGHT = 512,
             PIECE_TEX_SIZE = 1.0f / 3.0f;
 
-        int vaohandle;
-        int verticeshandle, indiceshandle;
+        int vaohandle, verticeshandle;
+
+#if UNIQUE_UNIFORM_METHOD
+        int[] indiceshandle = new int[6];
+
+        private void bindIndices(int index)
+        {
+            GL.BindVertexArray(vaohandle);
+
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indiceshandle[index]);
+
+            GL.BindVertexArray(0);
+        }
+#else
+        int indiceshandle;
+
+        private static Vector2[] GenPositions()
+        {
+            const float increment = 0.25f;
+
+            Vector2 offset = new Vector2(1.0f, 1.0f);
+
+            Vector2[] output = new Vector2[81];
+
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    int index = (i * 9) + j;
+                    output[index] = new Vector2((float)j * increment, (float)i * increment) - offset;
+                }
+            }
+
+            return output;
+        }
+#endif
+
 
         public GraphicsManager()
         {
             //Generates Objects on the graphics card and establishes a handle to work with them.
+            
+
+#if UNIQUE_UNIFORM_METHOD
+            GL.GenBuffers(6, indiceshandle);
+#else
+            GL.GenBuffers(1, out indiceshandle);
+#endif
             GL.GenVertexArrays(1, out vaohandle);
             GL.GenBuffers(1, out verticeshandle);
-            GL.GenBuffers(1, out indiceshandle);
 
             setVertices(GenVertices());
 
         }
 
-        //unfinished
+        public void renderBoard(Board board)
+        {
+
+        }
         private ushort[] GenIndices(Board board)
         {
             ushort[] output = new ushort[0];
@@ -62,16 +106,25 @@ namespace ChessGame
 
             return output;
         }
-
-        //finished
-        public void setIndices(ushort[] indices)
+        private void setIndices(ushort[] indices)
         {
-            GL.BindVertexArray(vaohandle);
+            //GL.BindVertexArray(vaohandle);
 
+#if UNIQUE_UNIFORM_METHOD
+            GL.GenBuffers(6, indiceshandle);
+            for (int i = 0; i < 6; i++)
+            {
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indiceshandle[i]);
+                GL.BufferData<ushort>(BufferTarget.ElementArrayBuffer, (IntPtr)(2 * 4), indices, BufferUsageHint.StaticDraw);
+            }
+#else
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indiceshandle);
             GL.BufferData<ushort>(BufferTarget.ElementArrayBuffer, (IntPtr)(2 * indices.Length), indices, BufferUsageHint.StaticDraw);
+#endif
 
-            GL.BindVertexArray(0);
+
+
+            //GL.BindVertexArray(0);
         }
         private void setVertices(Vertex[] vertices)
         {
@@ -88,8 +141,8 @@ namespace ChessGame
             Vertex[] output;
 
 #if UNIQUE_UNIFORM_METHOD
-            Vector2[] positions = new Vector2[4];
-            Vector2[] texCoords = new Vector2[12];
+            Vector2[] positions = new Vector2[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0)};
+            Vector2[] texCoords = GenTexCoords();
 
             output = new Vertex[48];
 
@@ -100,11 +153,10 @@ namespace ChessGame
                     int index = (i * 12) + j;
                     output[index] = new Vertex(positions[i], texCoords[j]);
                 }
-            } 
-
+            }
 #else
-            Vector2[] positions = new Vector2[81];
-            Vector2[] texCoords = new Vector2[12];
+            Vector2[] positions = GenPositions();
+            Vector2[] texCoords = GenTexCoords();
 
             output = new Vertex[972];
 
@@ -115,8 +167,7 @@ namespace ChessGame
                     int index = (i * 12) + j;
                     output[index] = new Vertex(positions[i], texCoords[j]);
                 }
-            } 
-
+            }
 #endif
 
             return output;
@@ -134,25 +185,6 @@ namespace ChessGame
                 for (int j = 0; j < 4; j++)
                 {
                     output[i + j] = new Vector2((float)j * PIECE_TEX_SIZE, (float)i * PIECE_TEX_SIZE) + offset;
-                }
-            }
-
-            return output;
-        }
-        private static Vector2[] GenPositions()
-        {
-            const float increment = 0.25f;
-
-            Vector2 offset = new Vector2(1.0f, 1.0f);
-
-            Vector2[] output = new Vector2[81];
-
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    int index = (i * 9) + j;
-                    output[index] = new Vector2((float)j * increment, (float)i * increment) - offset;
                 }
             }
 
