@@ -41,10 +41,9 @@ namespace ChessGame
             else //some kind of error must be flagged, noise would be ideal
                 Console.WriteLine("Illegal move");
         }
-    
 
         //check to make sure the move is legal
-        abstract public bool isLegal(Board board, int newFile, int newRank);
+        public abstract bool isLegal(Board board, int newFile, int newRank);
 
         public int getPlayer()
         {
@@ -63,12 +62,5 @@ namespace ChessGame
 
 
         }
-
-        //move logic for the extended piece
-        public void move();
-
-        //check to make sure the move is legal
-        public bool isLegal();
-       
     }
 }

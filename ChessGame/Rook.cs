@@ -12,7 +12,7 @@ namespace ChessGame
         {
         }
 
-        override public bool isLegal(Board board, int newRank, int newFile)
+        public override bool isLegal(Board board, int newRank, int newFile)
         {
             int tempFile = file;
             int tempRank = rank;

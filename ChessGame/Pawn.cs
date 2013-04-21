@@ -11,7 +11,7 @@ namespace ChessGame
         public Pawn(int player, int file, int rank)
             : base(player, file, rank) { }
 
-        override bool isLegal(Board board, int newFile, int newRank)
+        public override bool isLegal(Board board, int newFile, int newRank)
         {
             int tempFile;
             int tempRank;
