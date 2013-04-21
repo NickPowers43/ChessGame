@@ -15,7 +15,7 @@ namespace ChessGame
 
         public Game()
         {
-
+            board = new Board();
         }
 
         public void Update()
@@ -25,7 +25,7 @@ namespace ChessGame
 
         public void Render()
         {
-            //GraphicsManager.Instance.Render();
+            GraphicsManager.Instance.renderBoard(board);
         }
     }
 }

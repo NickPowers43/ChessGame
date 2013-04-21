@@ -18,7 +18,8 @@ namespace ChessGame
         {
             GL.ClearColor(Color4.Black);
 
-            //game = new Game();
+            GraphicsManager.Instance = new GraphicsManager();
+            game = new Game();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -38,7 +39,7 @@ namespace ChessGame
             //GL.Vertex3(0, 0, 0);
             //GL.End();
 
-            //game.Render();
+            game.Render();
 
             SwapBuffers();
         }

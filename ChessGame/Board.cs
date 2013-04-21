@@ -28,7 +28,7 @@ namespace ChessGame
 
         public Board()
         {
-
+            pieces[0, 0] = new Pawn(1, 0, 0);
         }
     }
 }
