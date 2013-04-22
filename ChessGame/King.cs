@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+
 namespace ChessGame
 {
     class King : Piece
@@ -77,5 +81,24 @@ namespace ChessGame
 
             return false;
         }
+
+        public static void Draw(Vector2 position, float scale)
+        {
+            GL.Begin(BeginMode.Lines);
+            GL.Vertex2(position + new Vector2(0.5f, 0.1f) * scale);
+            GL.Vertex2(position + new Vector2(0.5f, 0.9f) * scale);
+            GL.Vertex2(position + new Vector2(0.1f, 0.5f) * scale);
+            GL.Vertex2(position + new Vector2(0.9f, 0.5f) * scale);
+            GL.Vertex2(position + new Vector2(0.1f, 0.9f) * scale);
+            GL.Vertex2(position + new Vector2(0.9f, 0.1f) * scale);
+            GL.Vertex2(position + new Vector2(0.1f, 0.1f) * scale);
+            GL.Vertex2(position + new Vector2(0.9f, 0.9f) * scale);
+
+            GL.Vertex2(position + new Vector2(0.35f, 0.75f) * scale);
+            GL.Vertex2(position + new Vector2(0.65f, 0.75f) * scale);
+
+            GL.End();
+        }
+
     }
 }
