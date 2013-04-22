@@ -31,20 +31,28 @@ namespace ChessGame
         //move logic for the extended piece
         public void move(Board board, int newFile, int newRank) 
         {
-            if (isLegal(board, newRank, newFile))
+            if (isLegal(board, newFile, newRank))
             {
-                board.Pieces[newFile, newRank] = board.Pieces[file, rank];
-                board.Pieces[file, rank] = null;
+                //board.Pieces[newFile, newRank] = board.Pieces[file, rank];
+                //board.Pieces[file, rank] = null;
                 file = newFile;
                 rank = newRank;
                 moved++;
                 //promote pawns
-                if(board.Pieces[file,rank].getType().Equals("Pawn") && (rank == 0 || rank == 8))
-                    board.Pieces[file,rank] = new Queen(getPlayer(),file,rank);
+                if(this is Pawn && (rank == 0 || rank == 7))
+                    board.Pieces[newFile, newRank] = new Queen(player, file, rank);
+
+                board.Pieces[newFile, newRank] = this;
+                board.DropHeldPiece();
             }
             //update the graphics display
-            else //some kind of error must be flagged, noise would be ideal
-                Console.WriteLine("Illegal move");
+            else
+            {
+                //some kind of error must be flagged, noise would be ideal
+                Console.Beep();
+                board.Pieces[file, rank] = this;
+                board.DropHeldPiece();
+            } 
         }
 
         //check to make sure the move is legal
@@ -54,14 +62,6 @@ namespace ChessGame
         public int getPlayer()
         {
             return player;
-        }
-
-        //check if a square is empty
-        public bool isEmpty()
-        {
-            if (this == null)
-                return true;
-            else return false;
         }
 
         public String getType()

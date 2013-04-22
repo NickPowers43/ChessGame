@@ -21,22 +21,29 @@ namespace ChessGame
         //check if the move is legal
         public override bool isLegal(Board board, int newFile, int newRank)
         {
+            if (newFile == file & newRank == rank)
+                return false;
+
             int tempFile;
             int tempRank;
 
             int[,] offsets = { { 0, 1 }, { 0, 2 }, { -1, 1 }, { 1, 1 } };
 
+            Console.WriteLine("Seeking match at " + newFile + "," + newRank);
             for (int i = 0; i < offsets.GetLength(0); i++)
             {
+                Console.WriteLine("Testing offsets: " + offsets[i, 0] + "," + offsets[i, 1]);
                 tempFile = file;
                 tempRank = rank;
                 tempFile += offsets[i, 0];
                 tempRank += offsets[i, 1];
-                if (tempFile == newFile && tempRank == newRank)
+                if (tempFile == newFile & tempRank == newRank)
                 {
+                    Console.WriteLine("Match found");
                     //capture enemy piece
-                    if (newFile != file)
+                    if (newFile != file & newRank != rank & board.Pieces[newFile, newRank] != null)
                     {
+                        Console.WriteLine("Testing capture:");
                         if (board.Pieces[newFile, newRank].getPlayer() != player)
                             return true;
                         else return false;
@@ -45,10 +52,10 @@ namespace ChessGame
                     else if (newRank != rank)
                         //forward 2 on first move only
                         if (newRank == rank + 2)
-                            if (moved == 0 && board.Pieces[newFile, newRank].isEmpty())
+                            if (moved == 0 && board.Pieces[newFile, newRank] == null)
                                 return true;
                             else return false;
-                        else if (board.Pieces[newFile, newRank].isEmpty())
+                        if (board.Pieces[newFile, newRank] == null)
                             return true;
                         else return false;         
                 }

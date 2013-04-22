@@ -28,7 +28,7 @@ namespace ChessGame
         {
             base.OnUpdateFrame(e);
 
-            //game.Update(keyboard, mouse);
+            game.Update(Keyboard, Mouse);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -36,10 +36,6 @@ namespace ChessGame
             base.OnRenderFrame(e);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            //GL.Begin(BeginMode.Points);
-            //GL.Vertex3(0, 0, 0);
-            //GL.End();
 
             game.Render();
 

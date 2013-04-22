@@ -21,6 +21,9 @@ namespace ChessGame
         //check if the move is legal
         override public bool isLegal(Board board, int newRank, int newFile)
         {
+            if (newFile == file & newRank == rank)
+                return false;
+
             int tempFile = file;
             int tempRank = rank;
 
@@ -52,7 +55,7 @@ namespace ChessGame
                 }
 
                 //square occupied
-                if (!board.Pieces[tempFile, tempRank].isEmpty())
+                if (board.Pieces[tempFile, tempRank] != null)
                 {
                     if (board.Pieces[tempFile, tempRank].getPlayer() == player)
                         return false;

@@ -29,14 +29,9 @@ namespace ChessGame
             }
         }
 
-        const float 
-            PIECE_TEX_SIZE = 1.0f / 3.0f,
-            PIECE_SCALE = 2.0f / 8.0f;
+        
 
-        Color DARK_COLOR = Color.Brown;
-        Color LIGHT_COLOR = Color.SandyBrown;
-
-        static Vector2 bottomLeft = new Vector2(-1, -1);
+        
         //static int[][] indices = GenerateIndiceGroups();
 
         //Vector2[] TexCoords = GenerateTexCoords();
@@ -51,65 +46,10 @@ namespace ChessGame
 
         public void renderBoard(Board board)
         {
-            DrawCheckerBoard();
-
-            GL.ClearDepth(0);
-
-            for (int rank = 0; rank < 8; rank++)
-            {
-                for (int file = 0; file < 8; file++)
-                {
-                    object temp = board.Pieces[file, rank];
-
-                    if (temp != null)
-                    {
-                        GL.Color4(Color.White);
-                        if (temp is Pawn)
-                            Pawn.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
-                        //else if (temp is Bishop)
-                        //    Bishop.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
-                        //else if (temp is King)
-                        //    King.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
-                        //else if (temp is Rook)
-                        //    Rook.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
-                        //else if (temp is Knight)
-                        //    Knight.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
-                        //else if (temp is Queen)
-                        //    Queen.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
-
-
-                        //DrawTexturedQuad(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), 3.0f, indicesElement);
-                    }
-                }
-            }
+            
         }
-        private void DrawCheckerBoard()
-        {
-            GL.Begin(BeginMode.Quads);
-            bool swap0 = false;
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    swap0 = !swap0;
-                    if (swap0)
-                        GL.Color4(DARK_COLOR);
-                    else
-                        GL.Color4(LIGHT_COLOR);
-
-                    DrawQuad(bottomLeft + new Vector2(PIECE_SCALE * j, PIECE_SCALE * i), PIECE_SCALE);
-                }
-                swap0 = !swap0;
-            }
-            GL.End();
-        }
-        private void DrawQuad(Vector2 position, float scale)
-        {
-            GL.Vertex2(position);
-            GL.Vertex2(position + new Vector2(0, 1) * PIECE_SCALE);
-            GL.Vertex2(position + new Vector2(1, 1) * PIECE_SCALE);
-            GL.Vertex2(position + new Vector2(1, 0) * PIECE_SCALE);
-        }
+        
+        
         //private void DrawTexturedQuad(Vector2 position, float scale, int indicesGroup)
         //{
         //    //GL.Enable(EnableCap.Blend);

@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Threading;
 
 using OpenTK;
 using OpenTK.Graphics;
@@ -14,6 +19,15 @@ namespace ChessGame
         const int SIZE = 8;
         const int WHITE = 1;
         const int BLACK = 2;
+
+        const float
+            PIECE_TEX_SIZE = 1.0f / 3.0f,
+            PIECE_SCALE = 2.0f / 8.0f;
+
+        Color DARK_COLOR = Color.Brown;
+        Color LIGHT_COLOR = Color.SandyBrown;
+
+        static Vector2 bottomLeft = new Vector2(-1, -1);
 
         private int heldPieceFile, heldPieceRank;
         private int heldPieceHoverFile, heldPieceHoverRank;
@@ -55,13 +69,23 @@ namespace ChessGame
             heldPieceRank = rank;
 
             heldPiece = pieces[file, rank];
+
+            pieces[file, rank] = null;
         }
         public void SetPiece(int file, int rank)
         {
-            heldPiece.move(this, file, rank);
+            Console.WriteLine("Setting piece to: " + file + ", " + rank);
+            //check if move is legal
 
-            pieces[file, rank] = heldPiece;
-            heldPiece = null;
+
+            if (heldPiece != null)
+            {
+                //bool result = heldPiece.isLegal(this, file, rank);
+
+                heldPiece.move(this, file, rank);
+            }
+            //pieces[file, rank] = heldPiece;
+            //heldPiece = null;
         }
         public void HoverPiece(int file, int rank)
         {
@@ -99,6 +123,81 @@ namespace ChessGame
             pieces[6, 7] = new Knight(BLACK, 6, 7);
             pieces[7, 7] = new Rook(BLACK, 7, 7);
         }
+        public void Draw()
+        {
+            DrawCheckerBoard();
 
+            GL.ClearDepth(0);
+
+            for (int rank = 0; rank < 8; rank++)
+            {
+                for (int file = 0; file < 8; file++)
+                {
+                    if (file == heldPieceHoverFile & rank == heldPieceHoverRank & heldPiece != null)
+                        DrawPiece(file, rank, heldPiece);
+                    else
+                    {
+                        Piece temp = pieces[file, rank];
+
+                        if (temp != null)
+                            DrawPiece(file, rank, temp);
+                    }
+                        
+
+                }
+            }
+        }
+        private void DrawPiece(int file, int rank, Piece piece)
+        {
+            if (piece.getPlayer() == 1)
+                GL.Color4(Color.White);
+            else
+                GL.Color4(Color.Black);
+
+            if (piece is Pawn)
+                Pawn.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+            else if (piece is Bishop)
+                Bishop.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+            else if (piece is King)
+                King.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+            else if (piece is Rook)
+                Rook.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+            else if (piece is Knight)
+                Knight.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+            else if (piece is Queen)
+                Queen.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+        }
+        public void DropHeldPiece()
+        {
+            heldPiece = null;
+
+        }
+        private void DrawCheckerBoard()
+        {
+            GL.Begin(BeginMode.Quads);
+            bool swap0 = false;
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    swap0 = !swap0;
+                    if (swap0)
+                        GL.Color4(DARK_COLOR);
+                    else
+                        GL.Color4(LIGHT_COLOR);
+
+                    DrawQuad(bottomLeft + new Vector2(PIECE_SCALE * j, PIECE_SCALE * i), PIECE_SCALE);
+                }
+                swap0 = !swap0;
+            }
+            GL.End();
+        }
+        private void DrawQuad(Vector2 position, float scale)
+        {
+            GL.Vertex2(position);
+            GL.Vertex2(position + new Vector2(0, 1) * PIECE_SCALE);
+            GL.Vertex2(position + new Vector2(1, 1) * PIECE_SCALE);
+            GL.Vertex2(position + new Vector2(1, 0) * PIECE_SCALE);
+        }
     }
 }

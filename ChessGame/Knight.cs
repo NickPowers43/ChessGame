@@ -21,6 +21,9 @@ namespace ChessGame
         //check if the move is legal
         public override bool isLegal(Board board, int newFile, int newRank)
         {
+            if (newFile == file & newRank == rank)
+                return false;
+
             int tempFile;
             int tempRank;
 
@@ -35,9 +38,9 @@ namespace ChessGame
                 tempRank += offsets[i, 1];
                 if(tempFile == newFile && tempRank == newRank)
                 {
-                    if(board.Pieces[tempFile,tempRank].isEmpty())
+                    if(board.Pieces[tempFile,tempRank] == null)
                             return true;
-                    else if(!board.Pieces[tempFile,tempRank].isEmpty())
+                    else if(board.Pieces[tempFile,tempRank] != null)
                     {
                         if (board.Pieces[tempFile, tempRank].getPlayer() == player)
                             return false;
