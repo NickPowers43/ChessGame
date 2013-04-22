@@ -44,7 +44,8 @@ namespace ChessGame
                     {
                         if (board.Pieces[tempFile, tempRank].getPlayer() == player)
                             return false;
-                        else return true;
+                        else
+                            return true;
                     }
                 }
             }

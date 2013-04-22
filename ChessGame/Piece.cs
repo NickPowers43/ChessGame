@@ -38,13 +38,17 @@ namespace ChessGame
                 file = newFile;
                 rank = newRank;
                 moved++;
-                board.Pieces[newFile, newRank] = this;
+                if (board.Pieces[newFile, newRank] is King)
+                    board.setBoard();
+                else
+                    board.Pieces[newFile, newRank] = this;
 
                 //promote pawns
                 if (this is Pawn && (rank == 0 || rank == 7))
                     board.Pieces[newFile, newRank] = new Queen(player, file, rank);
 
                 board.DropHeldPiece();
+                board.SwapCurrentPlayer();
             }
             //update the graphics display
             else
