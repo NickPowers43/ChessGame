@@ -21,20 +21,11 @@ namespace ChessGame
         //check if the move is legal
         public override bool isLegal(Board board, int newFile, int newRank)
         {
-            if (newFile == file & newRank == rank) 
-            {
-                Console.WriteLine("false");
+            if ((newFile == file & newRank == rank) || (newFile != file & newRank != rank))
                 return false;
-            }
-            Console.WriteLine(file + " " + newFile);
-            if (newFile != file & newRank != rank)
-            {
-                Console.WriteLine("here");
-                return false;
-            }
+           
             int tempFile = file;
             int tempRank = rank;
-
 
             while (true)
             {

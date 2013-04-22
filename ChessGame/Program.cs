@@ -16,11 +16,8 @@ namespace ChessGame
         public Program()
             : base(800, 600)
         {
-            //TexUtil.InitTexturing();
-
             GL.ClearColor(Color4.Black);
 
-            GraphicsManager.Instance = new GraphicsManager();
             game = new Game();
         }
 

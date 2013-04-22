@@ -29,10 +29,10 @@ namespace ChessGame
 
             int[,] offsets = { { 0, 1 }, { 0, 2 }, { -1, 1 }, { 1, 1 } };
 
-            Console.WriteLine("Seeking match at " + newFile + "," + newRank);
+            //Console.WriteLine("Seeking match at " + newFile + "," + newRank);
             for (int i = 0; i < offsets.GetLength(0); i++)
             {
-                Console.WriteLine("Testing offsets: " + offsets[i, 0] + "," + offsets[i, 1]);
+                //Console.WriteLine("Testing offsets: " + offsets[i, 0] + "," + offsets[i, 1]);
                 tempFile = file;
                 tempRank = rank;
 
@@ -49,11 +49,11 @@ namespace ChessGame
 
                 if (tempFile == newFile & tempRank == newRank)
                 {
-                    Console.WriteLine("Match found");
+                    //Console.WriteLine("Match found");
                     //capture enemy piece
                     if (newFile != file && newRank != rank && board.Pieces[newFile, newRank] != null)
                     {
-                        Console.WriteLine("Testing capture:");
+                        //Console.WriteLine("Testing capture:");
                         if (board.Pieces[newFile, newRank].getPlayer() != player)
                             return true;
                         else return false;
@@ -61,7 +61,7 @@ namespace ChessGame
 
                     else if (newRank != rank & newFile == file)
                     {
-                        Console.WriteLine("Moving forwards");
+                        //Console.WriteLine("Moving forwards");
                         //forward 2 on first move only
                         if (newRank == rank + 2)
                             if (moved == 0 && board.Pieces[newFile, newRank] == null)

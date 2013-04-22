@@ -86,7 +86,7 @@ namespace ChessGame
         }
         public void SetPiece(int file, int rank)
         {
-            Console.WriteLine("Setting piece to: " + file + ", " + rank);
+            //Console.WriteLine("Setting piece to: " + file + ", " + rank);
             //check if move is legal
 
 
