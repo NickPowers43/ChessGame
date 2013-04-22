@@ -27,7 +27,7 @@ namespace ChessGame
             int tempFile;
             int tempRank;
 
-            int[,] offsets = { { 0, 1 }, { 0, 2 }, { -1, 1 }, { 1, 1 } };
+            int[,] offsets = { { 0, 1 }, { 0, -1 }, { -1, 1 }, { 1, 1 }, {1, -1}, {-1, -1}, {1, 0}, {-1, 0} };
 
             //normal king move
             for (int i = 0; i < offsets.GetLength(0); i++)
@@ -54,13 +54,15 @@ namespace ChessGame
                 if (newFile == 2 && board.Pieces[1, 0] == null && board.Pieces[2, 0] == null &&
                     board.Pieces[3, 0] == null && moved == 0 && board.Pieces[0, 0].moved == 0)
                 {
-                    board.Pieces[0, 0].move(board,3,0);
+                    board.Pieces[3, 0] = board.Pieces[0,0];
+                    board.Pieces[0, 0] = null;
                     return true;
                 }
                 if (newFile == 6 && board.Pieces[5, 0] == null && board.Pieces[6, 0] == null &&
                     moved == 0 && board.Pieces[7, 0].moved == 0)
                 {
-                    board.Pieces[0, 0].move(board, 6, 0);
+                    board.Pieces[5, 0] = board.Pieces[7,0];
+                    board.Pieces[7, 0] = null;
                     return true;
                 }
             }
@@ -71,13 +73,15 @@ namespace ChessGame
                 if (newFile == 2 && board.Pieces[1, 7] == null && board.Pieces[2, 7] == null &&
                     board.Pieces[3, 7] == null && moved == 0 && board.Pieces[0, 7].moved == 0)
                 {
-                    board.Pieces[0, 7].move(board, 3, 7);
+                    board.Pieces[3, 7] = board.Pieces[0, 7];
+                    board.Pieces[0, 7] = null;
                     return true;
                 }
                 if (newFile == 6 && board.Pieces[5, 7] == null && board.Pieces[6, 7] == null &&
                     moved == 0 && board.Pieces[7, 7].moved == 0)
                 {
-                    board.Pieces[0, 7].move(board, 6, 7);
+                    board.Pieces[5, 7] = board.Pieces[7, 7];
+                    board.Pieces[7, 7] = null;
                     return true;
                 }
             }

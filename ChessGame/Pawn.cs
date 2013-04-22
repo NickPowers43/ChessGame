@@ -35,13 +35,23 @@ namespace ChessGame
                 Console.WriteLine("Testing offsets: " + offsets[i, 0] + "," + offsets[i, 1]);
                 tempFile = file;
                 tempRank = rank;
-                tempFile += offsets[i, 0];
-                tempRank += offsets[i, 1];
+
+                if (player == WHITE)
+                {
+                    tempFile += offsets[i, 0];
+                    tempRank += offsets[i, 1];
+                }
+                else if (player == BLACK)
+                {
+                    tempFile -= offsets[i, 0];
+                    tempRank -= offsets[i, 1];
+                }
+
                 if (tempFile == newFile & tempRank == newRank)
                 {
                     Console.WriteLine("Match found");
                     //capture enemy piece
-                    if (newFile != file & newRank != rank & board.Pieces[newFile, newRank] != null)
+                    if (newFile != file && newRank != rank && board.Pieces[newFile, newRank] != null)
                     {
                         Console.WriteLine("Testing capture:");
                         if (board.Pieces[newFile, newRank].getPlayer() != player)
@@ -49,7 +59,9 @@ namespace ChessGame
                         else return false;
                     }
 
-                    else if (newRank != rank)
+                    else if (newRank != rank & newFile == file)
+                    {
+                        Console.WriteLine("Moving forwards");
                         //forward 2 on first move only
                         if (newRank == rank + 2)
                             if (moved == 0 && board.Pieces[newFile, newRank] == null)
@@ -57,7 +69,8 @@ namespace ChessGame
                             else return false;
                         if (board.Pieces[newFile, newRank] == null)
                             return true;
-                        else return false;         
+                        else return false;
+                    }
                 }
             }
             return false;

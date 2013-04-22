@@ -19,7 +19,7 @@ namespace ChessGame
         }
 
         //check if the move is legal
-        override public bool isLegal(Board board, int newRank, int newFile)
+        override public bool isLegal(Board board, int newFile, int newRank)
         {
             if (newFile == file & newRank == rank)
                 return false;
@@ -47,10 +47,10 @@ namespace ChessGame
                     tempFile++;
                     tempRank++;
                 }
-                //southwest move
-                else if (newRank < rank && newFile < file)
+                //southeast move
+                else if (newRank < rank && newFile > file)
                 {
-                    tempFile--;
+                    tempFile++;
                     tempRank--;
                 }
                 //north move
@@ -86,6 +86,10 @@ namespace ChessGame
                         else return false;
                     }
                 }
+
+                //reached target square
+                if (tempFile == newFile && tempRank == newRank)
+                    return true;
             }
         }
 

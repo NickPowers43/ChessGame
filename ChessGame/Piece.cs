@@ -11,8 +11,8 @@ namespace ChessGame
 {
     abstract class Piece
     {
-        const int WHITE = 1;
-        const int BLACK = 2;
+        public const int WHITE = 1;
+        public const int BLACK = 2;
 
         public string type;
         public int rank;
@@ -38,11 +38,12 @@ namespace ChessGame
                 file = newFile;
                 rank = newRank;
                 moved++;
+                board.Pieces[newFile, newRank] = this;
+
                 //promote pawns
-                if(this is Pawn && (rank == 0 || rank == 7))
+                if (this is Pawn && (rank == 0 || rank == 7))
                     board.Pieces[newFile, newRank] = new Queen(player, file, rank);
 
-                board.Pieces[newFile, newRank] = this;
                 board.DropHeldPiece();
             }
             //update the graphics display

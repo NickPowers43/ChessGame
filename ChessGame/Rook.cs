@@ -19,11 +19,19 @@ namespace ChessGame
         }
 
         //check if the move is legal
-        public override bool isLegal(Board board, int newRank, int newFile)
+        public override bool isLegal(Board board, int newFile, int newRank)
         {
-            if ((newFile == file & newRank == rank) || (newFile != file && newRank != rank))
+            if (newFile == file & newRank == rank) 
+            {
+                Console.WriteLine("false");
                 return false;
-
+            }
+            Console.WriteLine(file + " " + newFile);
+            if (newFile != file & newRank != rank)
+            {
+                Console.WriteLine("here");
+                return false;
+            }
             int tempFile = file;
             int tempRank = rank;
 
@@ -51,11 +59,13 @@ namespace ChessGame
                     tempFile--;
                 }
 
+                if (tempFile == newFile && tempRank == newRank)
+                    return true;
+
                 //square occupied
-                Piece currentBelow = board.Pieces[tempFile, tempRank];
-                if (currentBelow != null)
+                if (board.Pieces[tempFile, tempRank] != null)
                 {
-                    if (currentBelow.getPlayer() == this.player)
+                    if (board.Pieces[tempFile, tempRank].getPlayer() == this.player)
                         return false;
                     else if (board.Pieces[tempFile, tempRank].getPlayer() != player)
                     {
