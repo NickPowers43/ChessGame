@@ -7,10 +7,14 @@ namespace ChessGame
 {
     class Pawn : Piece
     {
-
+        //3 arg Pawn constructor
         public Pawn(int player, int file, int rank)
-            : base(player, file, rank) { }
+            : base(player, file, rank)
+        {
+            type = "Pawn";
+        }
 
+        //check if the move is legal
         public override bool isLegal(Board board, int newFile, int newRank)
         {
             int tempFile;
@@ -47,6 +51,5 @@ namespace ChessGame
             }
             return false;
         }
-
     }
 }

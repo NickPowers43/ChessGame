@@ -7,9 +7,14 @@ namespace ChessGame
 {
     class Bishop : Piece
     {
+        //3-arg Bishop constructor
         public Bishop(int player, int file, int rank)
-            : base(player, file, rank) {}
+            : base(player, file, rank) 
+        {
+            type = "Bishop";
+        }
 
+        //check if the move is legal
         override public bool isLegal(Board board, int newRank, int newFile)
         {
             int tempFile = file;

@@ -12,6 +12,8 @@ namespace ChessGame
     class Board
     {
         const int SIZE = 8;
+        const int WHITE = 1;
+        const int BLACK = 2;
 
         private Piece[,] pieces = new Piece[SIZE, SIZE];
         public Piece[,] Pieces
@@ -28,7 +30,34 @@ namespace ChessGame
 
         public Board()
         {
-            pieces[0, 0] = new Pawn(1, 0, 0);
+            setBoard();
         }
+
+        public void setBoard()
+        {
+            //set all squares to null
+            for (int i = 0; i < pieces.GetLength(0); i++)
+                for (int j = 0; j < pieces.GetLength(1); j++)
+                    pieces[i, j] = null;
+            //white pieces
+            pieces[0, 0] = new Rook(WHITE, 0, 0);
+            pieces[1, 0] = new Knight(WHITE, 1, 0);
+            pieces[2, 0] = new Bishop(WHITE, 2, 0);
+            pieces[3, 0] = new Queen(WHITE, 3, 0);
+            pieces[4, 0] = new King(WHITE, 4, 0);
+            pieces[5, 0] = new Bishop(WHITE, 5, 0);
+            pieces[6, 0] = new Knight(WHITE, 6, 0);
+            pieces[7, 0] = new Rook(WHITE, 7, 0);
+            //black pieces
+            pieces[0, 7] = new Rook(BLACK, 0, 7);
+            pieces[1, 7] = new Knight(BLACK, 1, 7);
+            pieces[2, 7] = new Bishop(BLACK, 2, 7);
+            pieces[3, 7] = new Queen(BLACK, 3, 7);
+            pieces[4, 7] = new King(BLACK, 4, 7);
+            pieces[5, 7] = new Bishop(BLACK, 5, 7);
+            pieces[6, 7] = new Knight(BLACK, 6, 7);
+            pieces[7, 7] = new Rook(BLACK, 7, 7);
+        }
+
     }
 }

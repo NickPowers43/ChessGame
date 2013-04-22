@@ -14,11 +14,13 @@ namespace ChessGame
         const int WHITE = 1;
         const int BLACK = 2;
 
+        public string type;
         public int rank;
         public int file;
         public int player;
         public int moved = 0;
 
+        //3-arg Piece constructor
         public Piece(int player, int file, int rank)
         {
             this.player = player;
@@ -36,6 +38,9 @@ namespace ChessGame
                 file = newFile;
                 rank = newRank;
                 moved++;
+                //promote pawns
+                if(board.Pieces[file,rank].getType().Equals("Pawn") && (rank == 0 || rank == 8))
+                    board.Pieces[file,rank] = new Queen(getPlayer(),file,rank);
             }
             //update the graphics display
             else //some kind of error must be flagged, noise would be ideal
@@ -45,11 +50,13 @@ namespace ChessGame
         //check to make sure the move is legal
         public abstract bool isLegal(Board board, int newFile, int newRank);
 
+        //return the player
         public int getPlayer()
         {
             return player;
         }
 
+        //check if a square is empty
         public bool isEmpty()
         {
             if (this == null)
@@ -57,10 +64,9 @@ namespace ChessGame
             else return false;
         }
 
-        public Piece(int color)
+        public String getType()
         {
-
-
+            return type;
         }
     }
 }
