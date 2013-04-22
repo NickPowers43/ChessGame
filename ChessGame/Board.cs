@@ -28,13 +28,14 @@ namespace ChessGame
             BOARD_WIDTH = PIECE_WIDTH * 8.0f;
 
         const int
-            DEFAULT_TIME_LIMIT = 120;
+            DEFAULT_TIME_LIMIT = 300;
 
         Color DARK_COLOR = Color.Brown;
         Color LIGHT_COLOR = Color.SandyBrown;
 
-        static Vector2 bottomLeft = new Vector2(PIECE_WIDTH - 1.0f, -1);
-        static Vector2 scale = new Vector2(PIECE_WIDTH, PIECE_HEIGHT);
+        public static Vector2 bottomLeft = new Vector2(PIECE_WIDTH - 1.0f, -1);
+        public static Vector2 scale = new Vector2(PIECE_WIDTH, PIECE_HEIGHT);
+        public static Vector2 boardSize = scale * 8.0f;
 
         int currentPlayer = 1;//Piece.WHITE;
         double 
@@ -122,6 +123,9 @@ namespace ChessGame
         }
         public void setBoard()
         {
+            ResetTimes();
+            heldPiece = null;
+
             //reset player times
             player1Time = DEFAULT_TIME_LIMIT;
             player2Time = DEFAULT_TIME_LIMIT;
@@ -286,6 +290,11 @@ namespace ChessGame
             {
                 player2Time -= time;
             }
+        }
+        public void ResetTimes()
+        {
+            player1Time = DEFAULT_TIME_LIMIT;
+            player2Time = DEFAULT_TIME_LIMIT;
         }
     }
 }

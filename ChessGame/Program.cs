@@ -43,7 +43,7 @@ namespace ChessGame
         {
             using (Program program = new Program())
             {
-                program.Run(30.0f, 30.0f);
+                program.Run(20.0f, 20.0f);
             }
         }
     }
