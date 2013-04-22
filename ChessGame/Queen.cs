@@ -93,17 +93,17 @@ namespace ChessGame
             }
         }
 
-        public static void Draw(Vector2 position, float scale)
+        public static void Draw(Vector2 position, Vector2 scale)
         {
             GL.Begin(BeginMode.Lines);
-            GL.Vertex2(position + new Vector2(0.5f, 0.1f) * scale);
-            GL.Vertex2(position + new Vector2(0.5f, 0.9f) * scale);
-            GL.Vertex2(position + new Vector2(0.1f, 0.5f) * scale);
-            GL.Vertex2(position + new Vector2(0.9f, 0.5f) * scale);
-            GL.Vertex2(position + new Vector2(0.1f, 0.9f) * scale);
-            GL.Vertex2(position + new Vector2(0.9f, 0.1f) * scale);
-            GL.Vertex2(position + new Vector2(0.1f, 0.1f) * scale);
-            GL.Vertex2(position + new Vector2(0.9f, 0.9f) * scale);
+            GL.Vertex2(position + new Vector2(scale.X * 0.5f, scale.Y * 0.1f));
+            GL.Vertex2(position + new Vector2(scale.X * 0.5f, scale.Y * 0.9f));
+            GL.Vertex2(position + new Vector2(scale.X * 0.1f, scale.Y * 0.5f));
+            GL.Vertex2(position + new Vector2(scale.X * 0.9f, scale.Y * 0.5f));
+            GL.Vertex2(position + new Vector2(scale.X * 0.1f, scale.Y * 0.9f));
+            GL.Vertex2(position + new Vector2(scale.X * 0.9f, scale.Y * 0.1f));
+            GL.Vertex2(position + new Vector2(scale.X * 0.1f, scale.Y * 0.1f));
+            GL.Vertex2(position + new Vector2(scale.X * 0.9f, scale.Y * 0.9f));
             GL.End();
         }
     }

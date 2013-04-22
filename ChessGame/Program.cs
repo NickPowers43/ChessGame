@@ -25,7 +25,7 @@ namespace ChessGame
         {
             base.OnUpdateFrame(e);
 
-            game.Update(Keyboard, Mouse);
+            game.Update(Keyboard, Mouse, e.Time);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)

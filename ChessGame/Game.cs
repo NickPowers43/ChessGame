@@ -25,7 +25,7 @@ namespace ChessGame
             board = new Board();
         }
 
-        public void Update(KeyboardDevice keyboard, MouseDevice mouse)
+        public void Update(KeyboardDevice keyboard, MouseDevice mouse, double time)
         {
             int file = 0, rank = 0;
             float temp = (float)mouse.X / (float)SCREEN_WIDTH;
@@ -36,6 +36,8 @@ namespace ChessGame
             temp *= 8.0f;
             rank = (int)temp;
 
+            board.SubtractTime(time);
+
             if (mouse[MOUSE0] & mouse[MOUSE0] != prevMouseButton)
             {
                 if (isHolding)
@@ -43,9 +45,9 @@ namespace ChessGame
                     board.SetPiece(file, rank);
                     isHolding = false;
                 }
-                else
+                else if (board.PickupPiece(file, rank))
                 {
-                    board.PickupPiece(file, rank);
+                    //board.PickupPiece(file, rank);
                     isHolding = true;
                 }
             }

@@ -20,16 +20,26 @@ namespace ChessGame
         const int WHITE = 1;
         const int BLACK = 2;
 
-        const float
+        public const float
             PIECE_TEX_SIZE = 1.0f / 3.0f,
-            PIECE_SCALE = 2.0f / 8.0f;
+            PIECE_HEIGHT = 2.0f / 8.0f,
+            PIECE_WIDTH = 2.0f / 10.0f,
+            TIME_BAR_WIDTH = PIECE_WIDTH,
+            BOARD_WIDTH = PIECE_WIDTH * 8.0f;
+
+        const int
+            DEFAULT_TIME_LIMIT = 120;
 
         Color DARK_COLOR = Color.Brown;
         Color LIGHT_COLOR = Color.SandyBrown;
 
-        static Vector2 bottomLeft = new Vector2(-1, -1);
+        static Vector2 bottomLeft = new Vector2(PIECE_WIDTH - 1.0f, -1);
+        static Vector2 scale = new Vector2(PIECE_WIDTH, PIECE_HEIGHT);
 
         int currentPlayer = 1;//Piece.WHITE;
+        double 
+            player1Time = DEFAULT_TIME_LIMIT,
+            player2Time = DEFAULT_TIME_LIMIT;
 
         private int heldPieceFile, heldPieceRank;
         private int heldPieceHoverFile, heldPieceHoverRank;
@@ -65,7 +75,7 @@ namespace ChessGame
             setBoard();
         }
 
-        public void PickupPiece(int file, int rank)
+        public bool PickupPiece(int file, int rank)
         {
             Piece piece = pieces[file, rank];
 
@@ -79,10 +89,16 @@ namespace ChessGame
                     heldPiece = piece;
 
                     pieces[file, rank] = null;
+
+                    return true;
                 }
                 else
+                {
                     Console.Beep(600, 200); 
+                    return false;
+                } 
             }
+            else return false;
         }
         public void SetPiece(int file, int rank)
         {
@@ -106,6 +122,10 @@ namespace ChessGame
         }
         public void setBoard()
         {
+            //reset player times
+            player1Time = DEFAULT_TIME_LIMIT;
+            player2Time = DEFAULT_TIME_LIMIT;
+
             //set all squares to null
             for (int i = 0; i < pieces.GetLength(0); i++)
                 for (int j = 0; j < pieces.GetLength(1); j++)
@@ -137,6 +157,8 @@ namespace ChessGame
         }
         public void Draw()
         {
+            DrawTimeBar();
+
             DrawCheckerBoard();
 
             GL.ClearDepth(0);
@@ -167,22 +189,54 @@ namespace ChessGame
                 GL.Color4(Color.Black);
 
             if (piece is Pawn)
-                Pawn.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+                Pawn.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
             else if (piece is Bishop)
-                Bishop.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+                Bishop.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
             else if (piece is King)
-                King.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+                King.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
             else if (piece is Rook)
-                Rook.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+                Rook.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
             else if (piece is Knight)
-                Knight.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+                Knight.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
             else if (piece is Queen)
-                Queen.Draw(bottomLeft + new Vector2(file * PIECE_SCALE, rank * PIECE_SCALE), PIECE_SCALE);
+                Queen.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
         }
         public void DropHeldPiece()
         {
             heldPiece = null;
 
+        }
+        private void DrawTimeBar()
+        {
+            float x = -1;
+            float y = -1;
+
+
+            double quotient = player1Time / DEFAULT_TIME_LIMIT;
+            GL.Color4(new Color4(1, (float)quotient, (float)quotient, 1));
+
+            GL.Begin(BeginMode.Quads);
+            GL.Vertex2(x, y);
+            y += (float)quotient * 2.0f;
+            GL.Vertex2(x, y);
+            x += TIME_BAR_WIDTH;
+            GL.Vertex2(x, y);
+            y = -1;
+            GL.Vertex2(x, y);
+
+            quotient = player2Time / DEFAULT_TIME_LIMIT;
+            GL.Color4(new Color4(1, (float)quotient, (float)quotient, 1));
+            x = 1;
+            y = -1;
+            GL.Vertex2(x, y);
+            x -= TIME_BAR_WIDTH;
+            GL.Vertex2(x, y);
+            y += (float)quotient * 2.0f;
+            GL.Vertex2(x, y);
+            x += TIME_BAR_WIDTH;
+            GL.Vertex2(x, y);
+
+            GL.End();
         }
         private void DrawCheckerBoard()
         {
@@ -198,18 +252,18 @@ namespace ChessGame
                     else
                         GL.Color4(LIGHT_COLOR);
 
-                    DrawQuad(bottomLeft + new Vector2(PIECE_SCALE * j, PIECE_SCALE * i), PIECE_SCALE);
+                    DrawQuad(bottomLeft + new Vector2(scale.X * j, scale.Y * i), scale);
                 }
                 swap0 = !swap0;
             }
             GL.End();
         }
-        private void DrawQuad(Vector2 position, float scale)
+        private void DrawQuad(Vector2 position, Vector2 scale)
         {
             GL.Vertex2(position);
-            GL.Vertex2(position + new Vector2(0, 1) * PIECE_SCALE);
-            GL.Vertex2(position + new Vector2(1, 1) * PIECE_SCALE);
-            GL.Vertex2(position + new Vector2(1, 0) * PIECE_SCALE);
+            GL.Vertex2(position + new Vector2(0, scale.Y));
+            GL.Vertex2(position + scale);
+            GL.Vertex2(position + new Vector2(scale.X, 0));
         }
         public void SwapCurrentPlayer()
         {
@@ -220,6 +274,17 @@ namespace ChessGame
             else
             {
                 currentPlayer = 1;
+            }
+        }
+        public void SubtractTime(double time)
+        {
+            if (currentPlayer == 1)
+            {
+                player1Time -= time;
+            }
+            else
+            {
+                player2Time -= time;
             }
         }
     }
