@@ -7,12 +7,14 @@ namespace ChessGame
 {
     class Knight : Piece
     {
-
+        //3-arg Knight constructor
         public Knight(int player, int file, int rank)
             : base(player, file, rank)
-        {        
+        {
+            type = "Knight";
         }
 
+        //check if the move is legal
         public override bool isLegal(Board board, int newFile, int newRank)
         {
             int tempFile;
