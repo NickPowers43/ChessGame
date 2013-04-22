@@ -15,6 +15,22 @@ namespace ChessGame
         const int WHITE = 1;
         const int BLACK = 2;
 
+        private int heldPieceFile, heldPieceRank;
+        private int heldPieceHoverFile, heldPieceHoverRank;
+
+        private Piece heldPiece;
+        public Piece HeldPiece
+        {
+            get
+            {
+                return heldPiece;
+            }
+            set
+            {
+                heldPiece = value;
+            }
+        }
+
         private Piece[,] pieces = new Piece[SIZE, SIZE];
         public Piece[,] Pieces
         {
@@ -33,6 +49,25 @@ namespace ChessGame
             setBoard();
         }
 
+        public void PickupPiece(int file, int rank)
+        {
+            heldPieceFile = file;
+            heldPieceRank = rank;
+
+            heldPiece = pieces[file, rank];
+        }
+        public void SetPiece(int file, int rank)
+        {
+            heldPiece.move(this, file, rank);
+
+            pieces[file, rank] = heldPiece;
+            heldPiece = null;
+        }
+        public void HoverPiece(int file, int rank)
+        {
+            heldPieceHoverFile = file;
+            heldPieceHoverRank = rank;
+        }
         public void setBoard()
         {
             //set all squares to null
