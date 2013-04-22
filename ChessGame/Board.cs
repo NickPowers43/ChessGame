@@ -39,6 +39,12 @@ namespace ChessGame
             for (int i = 0; i < pieces.GetLength(0); i++)
                 for (int j = 0; j < pieces.GetLength(1); j++)
                     pieces[i, j] = null;
+
+            for (int i = 0; i < 8; i++)
+            {
+                pieces[i, 1] = new Pawn(WHITE, i, 1);
+                pieces[i, 6] = new Pawn(BLACK, i, 6);
+            }
             //white pieces
             pieces[0, 0] = new Rook(WHITE, 0, 0);
             pieces[1, 0] = new Knight(WHITE, 1, 0);

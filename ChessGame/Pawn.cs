@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+
 namespace ChessGame
 {
     class Pawn : Piece
@@ -50,6 +54,14 @@ namespace ChessGame
                 }
             }
             return false;
+        }
+
+        public static void Draw(Vector2 position, float scale)
+        {
+            GL.Begin(BeginMode.Lines);
+            GL.Vertex2(position + new Vector2(0.5f, 0.1f) * scale);
+            GL.Vertex2(position + new Vector2(0.5f, 0.9f) * scale);
+            GL.End();
         }
     }
 }
