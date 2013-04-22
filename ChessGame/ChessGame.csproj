@@ -61,25 +61,6 @@
     <Compile Include="Rook.cs" />
     <Compile Include="texUtil.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Textures\ChessPieces.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\PieceFShader.txt" />
-    <EmbeddedResource Include="Shaders\PieceVShader.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\BoardVShader.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\BoardFShader.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Textures\ChessPiecesAlpha.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Textures\ChessPiecesAlphaless.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

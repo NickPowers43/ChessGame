@@ -18,6 +18,8 @@ namespace ChessGame
         private Board board;
         bool isHolding = false;
 
+        private const MouseButton MOUSE0 = MouseButton.Left;
+
         public Game()
         {
             board = new Board();
@@ -26,24 +28,15 @@ namespace ChessGame
         public void Update(KeyboardDevice keyboard, MouseDevice mouse)
         {
             int file = 0, rank = 0;
-
-            if (keyboard[Key.Space])
-            {
-                
-            }
             float temp = (float)mouse.X / (float)SCREEN_WIDTH;
             temp *= 8.0f;
             file = (int)temp;
-            //Console.WriteLine(temp);
             temp = (float)mouse.Y / (float)SCREEN_HEIGHT;
             temp = 1.0f - temp;
             temp *= 8.0f;
             rank = (int)temp;
-            //Console.WriteLine(temp);
 
-            //rank = 7 - rank;
-
-            if (mouse[MouseButton.Button1] & mouse[MouseButton.Button1] != prevMouseButton)
+            if (mouse[MOUSE0] & mouse[MOUSE0] != prevMouseButton)
             {
                 if (isHolding)
                 {
@@ -64,7 +57,7 @@ namespace ChessGame
                 }
             }
 
-            prevMouseButton = mouse[MouseButton.Button1];
+            prevMouseButton = mouse[MOUSE0];
         }
 
         public void Render()
