@@ -29,6 +29,8 @@ namespace ChessGame
 
         static Vector2 bottomLeft = new Vector2(-1, -1);
 
+        int currentPlayer = 1;//Piece.WHITE;
+
         private int heldPieceFile, heldPieceRank;
         private int heldPieceHoverFile, heldPieceHoverRank;
 
@@ -65,12 +67,22 @@ namespace ChessGame
 
         public void PickupPiece(int file, int rank)
         {
-            heldPieceFile = file;
-            heldPieceRank = rank;
+            Piece piece = pieces[file, rank];
 
-            heldPiece = pieces[file, rank];
+            if (piece != null)
+            {
+                if (piece.getPlayer() == currentPlayer)
+                {
+                    heldPieceFile = file;
+                    heldPieceRank = rank;
 
-            pieces[file, rank] = null;
+                    heldPiece = piece;
+
+                    pieces[file, rank] = null;
+                }
+                else
+                    Console.Beep(600, 200); 
+            }
         }
         public void SetPiece(int file, int rank)
         {
@@ -142,7 +154,7 @@ namespace ChessGame
                         if (temp != null)
                             DrawPiece(file, rank, temp);
                     }
-                        
+
 
                 }
             }
@@ -198,6 +210,17 @@ namespace ChessGame
             GL.Vertex2(position + new Vector2(0, 1) * PIECE_SCALE);
             GL.Vertex2(position + new Vector2(1, 1) * PIECE_SCALE);
             GL.Vertex2(position + new Vector2(1, 0) * PIECE_SCALE);
+        }
+        public void SwapCurrentPlayer()
+        {
+            if (currentPlayer == 1)
+            {
+                currentPlayer = 2;
+            }
+            else
+            {
+                currentPlayer = 1;
+            }
         }
     }
 }
