@@ -21,7 +21,7 @@ namespace ChessGame
         //check if the move is legal
         override public bool isLegal(Board board, int newFile, int newRank)
         {
-            if (newFile == file & newRank == rank)
+            if ((newFile == file & newRank == rank))
                 return false;
 
             int tempFile = file;

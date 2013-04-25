@@ -43,6 +43,16 @@ namespace ChessGame
         {
             using (Program program = new Program())
             {
+                Console.WriteLine("Chess Game by Michael Corallo and Nicholas Powers");
+                Console.WriteLine("+ : Rook");
+                Console.WriteLine("L : Knight");
+                Console.WriteLine("X : Bishop");
+                Console.WriteLine("* : Queen");
+                Console.WriteLine("* with line through it : King");
+                Console.WriteLine("| : Pawn");
+                Console.WriteLine("White starts. Capture the enemy king.");
+                Console.WriteLine("Have fun.");
+
                 program.Run(20.0f, 20.0f);
             }
         }

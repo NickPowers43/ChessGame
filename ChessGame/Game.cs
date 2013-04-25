@@ -52,7 +52,7 @@ namespace ChessGame
             file = (int)(coords.X * 8.0f);
             rank = (int)(coords.Y * 8.0f);
 
-            Console.WriteLine(file  + ", " + rank);
+            //Console.WriteLine(file  + ", " + rank);
 
             if(!paused)
                 board.SubtractTime(time);
