@@ -336,6 +336,7 @@ namespace ChessGame
             if (pieces[newFile, newRank] is King)
                 setBoard();
         }
+      
         private void SetHeldPiece(int file, int rank)
         {
             if (heldPiece != null)
@@ -346,9 +347,11 @@ namespace ChessGame
                 currRank = rank;
                 lastFile = heldPiece.file;
                 lastRank = heldPiece.rank;
+                lastEatenPiece = pieces[file, rank];
                 pieces[file, rank] = heldPiece;
+                pieces[file, rank].file = file;
+                pieces[file, rank].rank = rank;
                 LetGoOfPiece();
-                DisplayNotation(file, rank);
             }
             else
             {
@@ -360,6 +363,7 @@ namespace ChessGame
             if (heldPiece == null)
             {
                 PickupPiece(file, rank);
+ 
             }
             else
             {
@@ -367,6 +371,13 @@ namespace ChessGame
                 if (heldPiece.isLegal(this, file, rank))
                 {
                     SetHeldPiece(file, rank);
+                    Console.WriteLine(DisplayNotation(file, rank));
+                }
+                else
+                {
+                    SetHeldPiece(heldPieceFile, heldPieceRank);
+                    LetGoOfPiece();
+                    Console.WriteLine("Illegal move");
                 }
             }
         }
@@ -381,17 +392,26 @@ namespace ChessGame
             {
                 undoDone = true;
                 Pieces[lastFile, lastRank] = Pieces[currFile, currRank];
+                Pieces[lastFile, lastRank].file = lastFile;
+                Pieces[lastFile, lastRank].rank = lastRank;
                 Pieces[currFile, currRank] = lastEatenPiece;
+                if (lastEatenPiece != null)
+                {
+                    lastEatenPiece.file = currFile;
+                    lastEatenPiece.rank = currRank;
+                }
                 SwapCurrentPlayer(); 
             }
         }
 
-        public void DisplayNotation(int file, int rank)
+        public string DisplayNotation(int file, int rank)
         {
+            string Notation = "";
             if (pieces[file, rank] != null)
             {
-                Console.WriteLine(pieces[file, rank].getType() + " to " + getFile(file) + rank);
+                Notation += (pieces[file, rank].getType() + " to " + getFile(file) + (rank+1));
             }
+            return Notation;
         }
 
         public static char getFile(int file)

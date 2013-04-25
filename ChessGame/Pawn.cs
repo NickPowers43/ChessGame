@@ -21,6 +21,7 @@ namespace ChessGame
         //check if the move is legal
         public override bool isLegal(Board board, int newFile, int newRank)
         {
+            Console.WriteLine(player);
             if (newFile == file & newRank == rank)
                 return false;
 
@@ -47,16 +48,15 @@ namespace ChessGame
                     tempRank -= offsets[i, 1];
                 }
 
+                Console.WriteLine((char)(tempFile + 97) + "" + (tempRank+1));
+
                 if (tempFile == newFile & tempRank == newRank)
                 {
-                    //Console.WriteLine("Match found");
                     //capture enemy piece
                     if (newFile != file && newRank != rank && board.Pieces[newFile, newRank] != null)
                     {
-                        //Console.WriteLine("Testing capture:");
                         if (board.Pieces[newFile, newRank].getPlayer() != player)
                             return true;
-                        else return false;
                     }
 
                     else if (newRank != rank & newFile == file)

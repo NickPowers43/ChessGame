@@ -78,7 +78,7 @@ namespace ChessGame
                     break;
 
                 //square occupied
-                if (board.Pieces[tempFile, tempRank] != null && tempFile == newFile && tempRank == newRank)
+                if (board.Pieces[tempFile, tempRank] != null)
                 {
                     if (board.Pieces[tempFile, tempRank].getPlayer() == player)
                         return false;

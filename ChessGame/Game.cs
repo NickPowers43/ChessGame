@@ -18,7 +18,6 @@ namespace ChessGame
         //private bool prevZ = false;
         private bool prevMouseButton = false;
         private Board board;
-        bool isHolding = false;
 
         private const MouseButton MOUSE0 = MouseButton.Left;
 

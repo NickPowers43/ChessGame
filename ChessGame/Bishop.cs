@@ -61,7 +61,9 @@ namespace ChessGame
                 if (board.Pieces[tempFile, tempRank] != null)
                 {
                     if (board.Pieces[tempFile, tempRank].getPlayer() == player)
+                    {
                         return false;
+                    }
                     else if (board.Pieces[tempFile, tempRank].getPlayer() != player)
                     {
                         if (tempFile == newFile && tempRank == newRank)
