@@ -42,6 +42,35 @@ namespace ChessGame
             player1Time = DEFAULT_TIME_LIMIT,
             player2Time = DEFAULT_TIME_LIMIT;
 
+        //last moved piece data
+        private Piece lastEatenPiece;
+        public Piece LastEatenPiece
+        {
+            get
+            {
+                return lastEatenPiece;
+            }
+            set
+            {
+                lastEatenPiece = value;
+            }
+        }
+        private bool lastMoveCapture = false;
+        public bool undoDone = true;
+        public bool LastMoveCapture
+        {
+            get
+            {
+                return lastMoveCapture;
+            }
+            set
+            {
+                lastMoveCapture = value;
+            }
+        }
+        public int lastFile, lastRank;
+        public int currFile, currRank;
+
         private int heldPieceFile, heldPieceRank;
         private int heldPieceHoverFile, heldPieceHoverRank;
 
@@ -106,15 +135,16 @@ namespace ChessGame
             //Console.WriteLine("Setting piece to: " + file + ", " + rank);
             //check if move is legal
 
-
             if (heldPiece != null)
             {
-                //bool result = heldPiece.isLegal(this, file, rank);
-
-                heldPiece.move(this, file, rank);
+                if (heldPiece.isLegal(this, file, rank))
+                {
+                    heldPiece.moved++;
+                    MovePiece(heldPiece.file, heldPiece.rank, file, rank);
+                    
+                    SwapCurrentPlayer();
+                }
             }
-            //pieces[file, rank] = heldPiece;
-            //heldPiece = null;
         }
         public void HoverPiece(int file, int rank)
         {
@@ -123,6 +153,8 @@ namespace ChessGame
         }
         public void setBoard()
         {
+            currentPlayer = WHITE;
+
             ResetTimes();
             heldPiece = null;
 
@@ -205,10 +237,9 @@ namespace ChessGame
             else if (piece is Queen)
                 Queen.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
         }
-        public void DropHeldPiece()
+        public void LetGoOfPiece()
         {
             heldPiece = null;
-
         }
         private void DrawTimeBar()
         {
@@ -271,14 +302,7 @@ namespace ChessGame
         }
         public void SwapCurrentPlayer()
         {
-            if (currentPlayer == 1)
-            {
-                currentPlayer = 2;
-            }
-            else
-            {
-                currentPlayer = 1;
-            }
+            currentPlayer = 3 - currentPlayer;
         }
         public void SubtractTime(double time)
         {
@@ -296,5 +320,85 @@ namespace ChessGame
             player1Time = DEFAULT_TIME_LIMIT;
             player2Time = DEFAULT_TIME_LIMIT;
         }
+
+        private void MovePiece(int file, int rank, int newFile, int newRank)
+        {
+            undoDone = false;
+            lastEatenPiece = pieces[newFile, newRank];
+            currFile = newFile;
+            currRank = newRank;
+            lastFile = file;
+            lastRank = rank;
+            pieces[newFile, newRank] = heldPiece;
+            pieces[file, rank] = null;
+            LetGoOfPiece();
+
+            if (pieces[newFile, newRank] is King)
+                setBoard();
+        }
+        private void SetHeldPiece(int file, int rank)
+        {
+            if (heldPiece != null)
+            {
+                SwapCurrentPlayer();
+                undoDone = false;
+                currFile = file;
+                currRank = rank;
+                lastFile = heldPiece.file;
+                lastRank = heldPiece.rank;
+                pieces[file, rank] = heldPiece;
+                LetGoOfPiece();
+                DisplayNotation(file, rank);
+            }
+            else
+            {
+                Console.WriteLine("there is no held piece to set");
+            }
+        }
+        public void OnClick(int file, int rank)
+        {
+            if (heldPiece == null)
+            {
+                PickupPiece(file, rank);
+            }
+            else
+            {
+                Console.WriteLine("picking up piece");
+                if (heldPiece.isLegal(this, file, rank))
+                {
+                    SetHeldPiece(file, rank);
+                }
+            }
+        }
+        public void OnHover(int file, int rank)
+        {
+            heldPieceHoverFile = file;
+            heldPieceHoverRank = rank;
+        }
+        public void UndoLastMove()
+        {
+            if (!undoDone)
+            {
+                undoDone = true;
+                Pieces[lastFile, lastRank] = Pieces[currFile, currRank];
+                Pieces[currFile, currRank] = lastEatenPiece;
+                SwapCurrentPlayer(); 
+            }
+        }
+
+        public void DisplayNotation(int file, int rank)
+        {
+            if (pieces[file, rank] != null)
+            {
+                Console.WriteLine(pieces[file, rank].getType() + " to " + getFile(file) + rank);
+            }
+        }
+
+        public static char getFile(int file)
+        {
+            return (char)(97 + file);
+        }
+
+
     }
 }

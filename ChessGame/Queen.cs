@@ -74,8 +74,11 @@ namespace ChessGame
                     tempFile--;
                 }
 
+                if (!(tempFile >= 0 & tempFile < 8 & tempRank >= 0 & tempRank < 8))
+                    break;
+
                 //square occupied
-                if (board.Pieces[tempFile, tempRank] != null)
+                if (board.Pieces[tempFile, tempRank] != null && tempFile == newFile && tempRank == newRank)
                 {
                     if (board.Pieces[tempFile, tempRank].getPlayer() == player)
                         return false;
@@ -91,6 +94,8 @@ namespace ChessGame
                 if (tempFile == newFile && tempRank == newRank)
                     return true;
             }
+
+            return false;
         }
 
         public static void Draw(Vector2 position, Vector2 scale)

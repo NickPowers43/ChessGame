@@ -15,6 +15,7 @@ namespace ChessGame
         public const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 
         private bool paused = true, prevSpace = false;
+        //private bool prevZ = false;
         private bool prevMouseButton = false;
         private Board board;
         bool isHolding = false;
@@ -57,6 +58,10 @@ namespace ChessGame
             if(!paused)
                 board.SubtractTime(time);
 
+            if (keyboard[Key.Z])
+            {
+                board.UndoLastMove();
+            }
             if (keyboard[Key.R])
             {
                 board.setBoard();
@@ -69,23 +74,25 @@ namespace ChessGame
 
             if (mouse[MOUSE0] & mouse[MOUSE0] != prevMouseButton)
             {
-                if (isHolding)
-                {
-                    board.SetPiece(file, rank);
-                    isHolding = false;
-                }
-                else if (board.PickupPiece(file, rank))
-                {
-                    //board.PickupPiece(file, rank);
-                    isHolding = true;
-                }
+                //if (isHolding)
+                //{
+                //    board.SetPiece(file, rank);
+                //    isHolding = false;
+                //}
+                //else if (board.PickupPiece(file, rank))
+                //{
+                //    //board.PickupPiece(file, rank);
+                //    isHolding = true;
+                //}
+                board.OnClick(file, rank);
             }
             else
             {
-                if (isHolding)
-                {
-                    board.HoverPiece(file, rank);
-                }
+                //if (isHolding)
+                //{
+                //    board.HoverPiece(file, rank);
+                //}
+                board.OnHover(file, rank);
             }
 
             prevMouseButton = mouse[MOUSE0];

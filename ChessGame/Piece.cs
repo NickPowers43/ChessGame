@@ -35,20 +35,21 @@ namespace ChessGame
             {
                 //board.Pieces[newFile, newRank] = board.Pieces[file, rank];
                 //board.Pieces[file, rank] = null;
-                file = newFile;
-                rank = newRank;
-                moved++;
+                board.LastEatenPiece = board.Pieces[newFile, newRank];
                 if (board.Pieces[newFile, newRank] is King)
                     board.setBoard();
                 else
                 {
                     board.Pieces[newFile, newRank] = this;
-
                     //promote pawns
                     if (this is Pawn && (rank == 0 || rank == 7))
                         board.Pieces[newFile, newRank] = new Queen(player, file, rank);
+
                 }
-                board.DropHeldPiece();
+                file = newFile;
+                rank = newRank;
+                moved++;
+                
                 board.SwapCurrentPlayer();
             }
             //update the graphics display
@@ -57,7 +58,7 @@ namespace ChessGame
                 //some kind of error must be flagged, noise would be ideal
                 Console.Beep();
                 board.Pieces[file, rank] = this;
-                board.DropHeldPiece();
+                board.LetGoOfPiece();
             } 
         }
 

@@ -55,6 +55,7 @@ namespace ChessGame
                     board.Pieces[3, 0] == null && moved == 0 && board.Pieces[0, 0].moved == 0)
                 {
                     board.Pieces[3, 0] = board.Pieces[0,0];
+                    board.Pieces[3, 0].file = 3;
                     board.Pieces[0, 0] = null;
                     return true;
                 }
@@ -62,6 +63,7 @@ namespace ChessGame
                     moved == 0 && board.Pieces[7, 0].moved == 0)
                 {
                     board.Pieces[5, 0] = board.Pieces[7,0];
+                    board.Pieces[5, 0].file = 5;
                     board.Pieces[7, 0] = null;
                     return true;
                 }
@@ -74,6 +76,7 @@ namespace ChessGame
                     board.Pieces[3, 7] == null && moved == 0 && board.Pieces[0, 7].moved == 0)
                 {
                     board.Pieces[3, 7] = board.Pieces[0, 7];
+                    board.Pieces[3, 0].file = 3;
                     board.Pieces[0, 7] = null;
                     return true;
                 }
@@ -81,6 +84,7 @@ namespace ChessGame
                     moved == 0 && board.Pieces[7, 7].moved == 0)
                 {
                     board.Pieces[5, 7] = board.Pieces[7, 7];
+                    board.Pieces[5, 0].file = 5;
                     board.Pieces[7, 7] = null;
                     return true;
                 }
