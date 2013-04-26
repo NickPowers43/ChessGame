@@ -37,7 +37,7 @@ namespace ChessGame
         public static Vector2 scale = new Vector2(PIECE_WIDTH, PIECE_HEIGHT);
         public static Vector2 boardSize = scale * 8.0f;
 
-        int currentPlayer = 1;//Piece.WHITE;
+        int currentPlayer = WHITE;
         double 
             player1Time = DEFAULT_TIME_LIMIT,
             player2Time = DEFAULT_TIME_LIMIT;
@@ -55,19 +55,8 @@ namespace ChessGame
                 lastEatenPiece = value;
             }
         }
-        private bool lastMoveCapture = false;
+
         public bool undoDone = true;
-        public bool LastMoveCapture
-        {
-            get
-            {
-                return lastMoveCapture;
-            }
-            set
-            {
-                lastMoveCapture = value;
-            }
-        }
         public int lastFile, lastRank;
         public int currFile, currRank;
 
@@ -117,7 +106,15 @@ namespace ChessGame
                     heldPieceRank = rank;
 
                     heldPiece = piece;
+                   /* if (heldPiece is Pawn)
+                    {
+                        var list = heldPiece.getPossibleMoves(this);
+                        foreach (Square i in list)
+                            if (i.file == 4 && i.rank == 3)
+                                Console.WriteLine("wow!");
 
+                    }*/
+                    Console.WriteLine("This " + heldPiece.getType() + "has moved " + heldPiece.moved + "times");
                     pieces[file, rank] = null;
 
                     return true;
@@ -140,8 +137,8 @@ namespace ChessGame
                 if (heldPiece.isLegal(this, file, rank))
                 {
                     heldPiece.moved++;
-                    MovePiece(heldPiece.file, heldPiece.rank, file, rank);
-                    
+                    MovePiece(heldPieceFile, heldPieceRank, file, rank);
+
                     SwapCurrentPlayer();
                 }
             }
@@ -240,6 +237,10 @@ namespace ChessGame
         public void LetGoOfPiece()
         {
             heldPiece = null;
+        }
+        public void ReleasePiece()
+        {
+            pieces[heldPieceFile, heldPieceRank] = heldPiece;
         }
         private void DrawTimeBar()
         {
@@ -341,17 +342,17 @@ namespace ChessGame
         {
             if (heldPiece != null)
             {
-                SwapCurrentPlayer();
                 undoDone = false;
                 currFile = file;
                 currRank = rank;
-                lastFile = heldPiece.file;
-                lastRank = heldPiece.rank;
+                lastFile = heldPieceFile;
+                lastRank = heldPieceRank;
                 lastEatenPiece = pieces[file, rank];
                 pieces[file, rank] = heldPiece;
                 pieces[file, rank].file = file;
                 pieces[file, rank].rank = rank;
                 LetGoOfPiece();
+                SwapCurrentPlayer();
             }
             else
             {
@@ -367,17 +368,17 @@ namespace ChessGame
             }
             else
             {
-                Console.WriteLine("picking up piece");
                 if (heldPiece.isLegal(this, file, rank))
                 {
                     SetHeldPiece(file, rank);
+                    pieces[file, rank].moved++;
                     Console.WriteLine(DisplayNotation(file, rank));
                 }
                 else
                 {
-                    SetHeldPiece(heldPieceFile, heldPieceRank);
+                    ReleasePiece();
                     LetGoOfPiece();
-                    Console.WriteLine("Illegal move");
+                    Console.Beep();
                 }
             }
         }
@@ -394,6 +395,7 @@ namespace ChessGame
                 Pieces[lastFile, lastRank] = Pieces[currFile, currRank];
                 Pieces[lastFile, lastRank].file = lastFile;
                 Pieces[lastFile, lastRank].rank = lastRank;
+                Pieces[lastFile, lastRank].moved--;
                 Pieces[currFile, currRank] = lastEatenPiece;
                 if (lastEatenPiece != null)
                 {

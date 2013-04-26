@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 using OpenTK;
 using OpenTK.Graphics;
@@ -18,6 +19,49 @@ namespace ChessGame
             type = "Pawn";
         }
 
+        //this method is for eventually determining checks
+        public override List<Square> getPossibleMoves(Board board){
+            var possibleMoves = new List<Square>();
+            int[,] offsets = { { 0, 1 }, { 0, 2 }, { -1, 1 }, { 1, 1 } };
+            int tempFile, tempRank;
+            for (int i = 0; i < offsets.GetLength(0); i++)
+            {
+                if (offsets[i, 1] == 2 && moved > 0)
+                    continue;
+
+                tempFile = file;
+                tempRank = rank;
+
+                if (player == WHITE){
+                    tempFile += offsets[i, 0];
+                    tempRank += offsets[i, 1];
+                }else{
+                    tempFile -= offsets[i, 0];
+                    tempRank -= offsets[i, 1];
+                }
+
+                Console.WriteLine("Seeking match at " + tempFile + "," + tempRank);
+                if (tempFile != file)
+                {
+                    if (board.Pieces[tempFile, tempRank] != null)
+                    {
+                        if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                        {
+                            Console.WriteLine("adding " + tempFile + "," + tempRank);
+                            possibleMoves.Add(new Square(tempFile, tempRank));
+                        }
+                    }
+                }
+                else
+                    if (board.Pieces[tempFile, tempRank] == null)
+                    {
+                        Console.WriteLine("adding " + tempFile + "," + tempRank);
+                        possibleMoves.Add(new Square(tempFile, tempRank));
+                    }
+            }
+            return possibleMoves;
+        }
+
         //check if the move is legal
         public override bool isLegal(Board board, int newFile, int newRank)
         {
@@ -30,9 +74,10 @@ namespace ChessGame
 
             int[,] offsets = { { 0, 1 }, { 0, 2 }, { -1, 1 }, { 1, 1 } };
 
-            //Console.WriteLine("Seeking match at " + newFile + "," + newRank);
             for (int i = 0; i < offsets.GetLength(0); i++)
             {
+                if (offsets[i, 1] == 2 && moved > 0)
+                    continue;
                 //Console.WriteLine("Testing offsets: " + offsets[i, 0] + "," + offsets[i, 1]);
                 tempFile = file;
                 tempRank = rank;

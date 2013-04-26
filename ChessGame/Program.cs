@@ -51,7 +51,6 @@ namespace ChessGame
                 Console.WriteLine("* with line through it : King");
                 Console.WriteLine("| : Pawn");
                 Console.WriteLine("White starts. Capture the enemy king.");
-                Console.WriteLine("Have fun.");
 
                 program.Run(20.0f, 20.0f);
             }

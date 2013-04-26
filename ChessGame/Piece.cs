@@ -62,6 +62,21 @@ namespace ChessGame
             } 
         }
 
+        //this method will help to determine checks
+        public virtual List<Square> getPossibleMoves(Board board)
+        {
+            var possibleMoves = new List<Square>();
+            return possibleMoves;
+        }
+
+        //check to make sure the piece stays on the board
+        public bool inBounds(int file, int rank)
+        {
+            if (file >= 0 && rank >= 0 && file < 8 && rank < 8)
+                return true;
+            return false;
+        }
+
         //check to make sure the move is legal
         public abstract bool isLegal(Board board, int newFile, int newRank);
 
