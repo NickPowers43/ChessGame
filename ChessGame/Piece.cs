@@ -28,46 +28,8 @@ namespace ChessGame
             this.rank = rank;
         }
 
-        //move logic for the extended piece
-        public void move(Board board, int newFile, int newRank) 
-        {
-            if (isLegal(board, newFile, newRank))
-            {
-                //board.Pieces[newFile, newRank] = board.Pieces[file, rank];
-                //board.Pieces[file, rank] = null;
-                board.LastEatenPiece = board.Pieces[newFile, newRank];
-                if (board.Pieces[newFile, newRank] is King)
-                    board.setBoard();
-                else
-                {
-                    board.Pieces[newFile, newRank] = this;
-                    //promote pawns
-                    if (this is Pawn && (rank == 0 || rank == 7))
-                        board.Pieces[newFile, newRank] = new Queen(player, file, rank);
-
-                }
-                file = newFile;
-                rank = newRank;
-                moved++;
-                
-                board.SwapCurrentPlayer();
-            }
-            //update the graphics display
-            else
-            {
-                //some kind of error must be flagged, noise would be ideal
-                Console.Beep();
-                board.Pieces[file, rank] = this;
-                board.LetGoOfPiece();
-            } 
-        }
-
-        //this method will help to determine checks
-        public virtual List<Square> getPossibleMoves(Board board)
-        {
-            var possibleMoves = new List<Square>();
-            return possibleMoves;
-        }
+        //return a list of all possible moves for a piece
+        public abstract List<Square> getPossibleMoves(Board board);
 
         //check to make sure the piece stays on the board
         public bool inBounds(int file, int rank)
@@ -77,8 +39,15 @@ namespace ChessGame
             return false;
         }
 
-        //check to make sure the move is legal
-        public abstract bool isLegal(Board board, int newFile, int newRank);
+        //determine if a move is legal
+        public bool isLegalMove(Board board, int newFile, int newRank)
+        {
+            var possibleMoves = getPossibleMoves(board);
+            foreach (Square i in possibleMoves)
+                if (newFile == i.file && newRank == i.rank)
+                    return true;
+            return false;
+        }
 
         //return the player
         public int getPlayer()
@@ -86,7 +55,8 @@ namespace ChessGame
             return player;
         }
 
-        public String getType()
+        //return the piece type
+        public String getPieceType()
         {
             return type;
         }

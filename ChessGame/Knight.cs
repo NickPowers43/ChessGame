@@ -18,38 +18,36 @@ namespace ChessGame
             type = "Knight";
         }
 
-        //check if the move is legal
-        public override bool isLegal(Board board, int newFile, int newRank)
+        //get list of possible moves
+        public override List<Square> getPossibleMoves(Board board)
         {
-            if (newFile == file & newRank == rank)
-                return false;
-
-            int tempFile;
-            int tempRank;
-
+            var possibleMoves = new List<Square>();
             int[,] offsets = {{-2, 1},{-1, 2},{1, 2},{2, 1},
                          {2, -1},{1, -2},{-1, -2},{-2, -1}};
 
+            int tempFile, tempRank;
             for (int i = 0; i < offsets.GetLength(0); i++)
             {
+
                 tempFile = file;
                 tempRank = rank;
+
                 tempFile += offsets[i, 0];
                 tempRank += offsets[i, 1];
-                if(tempFile == newFile && tempRank == newRank)
+
+                if (!inBounds(tempFile, tempRank))
+                    continue;
+
+                if (board.Pieces[tempFile, tempRank] != null)
                 {
-                    if(board.Pieces[tempFile,tempRank] == null)
-                            return true;
-                    else if(board.Pieces[tempFile,tempRank] != null)
-                    {
-                        if (board.Pieces[tempFile, tempRank].getPlayer() == player)
-                            return false;
-                        else
-                            return true;
-                    }
+                    if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                        possibleMoves.Add(new Square(tempFile, tempRank));
+                    else continue;
                 }
+                else
+                    possibleMoves.Add(new Square(tempFile, tempRank));
             }
-            return false;
+            return possibleMoves;
         }
 
         public static void Draw(Vector2 position, Vector2 scale)

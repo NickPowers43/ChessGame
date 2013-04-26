@@ -18,84 +18,38 @@ namespace ChessGame
             type = "Queen";
         }
 
-        //check if the move is legal
-        override public bool isLegal(Board board, int newFile, int newRank)
+        //get list of possible moves
+        public override List<Square> getPossibleMoves(Board board)
         {
-            if (newFile == file & newRank == rank)
-                return false;
+            var possibleMoves = new List<Square>();
+            int[,] offsets = { { -1, 1 }, { 0, 1 }, { 1, 1 }, 
+                             { -1, 0 }, { 1, 0 }, { -1, -1 }, 
+                             { 0, -1 }, { 1, -1 } };
 
-            int tempFile = file;
-            int tempRank = rank;
-
-            while (true)
+            int tempFile, tempRank;
+            for (int i = 0; i < offsets.GetLength(0); i++)
             {
-                //northwest move
-                if (newRank > rank && newFile < file)
+                tempFile = file;
+                tempRank = rank;
+                for (int j = 0; j < 8; j++)
                 {
-                    tempRank++;
-                    tempFile--;
-                }
-                //southwest move
-                else if (newRank < rank && newFile < file)
-                {
-                    tempRank--;
-                    tempFile--;
-                }
-                //northeast move
-                else if (newRank > rank && newFile > file)
-                {
-                    tempFile++;
-                    tempRank++;
-                }
-                //southeast move
-                else if (newRank < rank && newFile > file)
-                {
-                    tempFile++;
-                    tempRank--;
-                }
-                //north move
-                if (newRank > rank && newFile == file)
-                {
-                    tempRank++;
-                }
-                //south move
-                else if (newRank < rank && newFile == file)
-                {
-                    tempRank--;
-                }
-                //east move
-                else if (newRank == rank && newFile > file)
-                {
-                    tempFile++;
-                }
-                //west move
-                else if (newRank == rank && newFile < file)
-                {
-                    tempFile--;
-                }
+                    tempFile += offsets[i, 0];
+                    tempRank += offsets[i, 1];
 
-                if (!(tempFile >= 0 & tempFile < 8 & tempRank >= 0 & tempRank < 8))
-                    break;
+                    if (!inBounds(tempFile, tempRank))
+                        break;
 
-                //square occupied
-                if (board.Pieces[tempFile, tempRank] != null)
-                {
-                    if (board.Pieces[tempFile, tempRank].getPlayer() == player)
-                        return false;
-                    else if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                    if (board.Pieces[tempFile, tempRank] != null)
                     {
-                        if (tempFile == newFile && tempRank == newRank)
-                            return true;
-                        else return false;
+                        if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                            possibleMoves.Add(new Square(tempFile, tempRank));
+                        break;
                     }
+                    else
+                        possibleMoves.Add(new Square(tempFile, tempRank));
                 }
-
-                //reached target square
-                if (tempFile == newFile && tempRank == newRank)
-                    return true;
             }
-
-            return false;
+            return possibleMoves;
         }
 
         public static void Draw(Vector2 position, Vector2 scale)

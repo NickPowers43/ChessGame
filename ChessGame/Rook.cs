@@ -18,54 +18,36 @@ namespace ChessGame
             type = "Rook";
         }
 
-        //check if the move is legal
-        public override bool isLegal(Board board, int newFile, int newRank)
+        //get list of possible moves
+        public override List<Square> getPossibleMoves(Board board)
         {
-            if ((newFile == file & newRank == rank) || (newFile != file & newRank != rank))
-                return false;
-           
-            int tempFile = file;
-            int tempRank = rank;
+            var possibleMoves = new List<Square>();
+            int[,] offsets = {{-1, 0},{0, 1},{1, 0},{0, -1}};
 
-            while (true)
+            int tempFile, tempRank;
+            for (int i = 0; i < offsets.GetLength(0); i++)
             {
-                //north move
-                if (newRank > rank && newFile == file)
+                tempFile = file;
+                tempRank = rank;
+                for (int j = 0; j < 8; j++)
                 {
-                    tempRank++;
-                }
-                //south move
-                else if (newRank < rank && newFile == file)
-                {
-                    tempRank--;
-                }
-                //east move
-                else if (newRank == rank && newFile > file)
-                {
-                    tempFile++;
-                }
-                //west move
-                else if (newRank == rank && newFile < file)
-                {
-                    tempFile--;
-                }
+                    tempFile += offsets[i, 0];
+                    tempRank += offsets[i, 1];
 
-                if (tempFile == newFile && tempRank == newRank)
-                    return true;
+                    if (!inBounds(tempFile, tempRank))
+                        break;
 
-                //square occupied
-                if (board.Pieces[tempFile, tempRank] != null)
-                {
-                    if (board.Pieces[tempFile, tempRank].getPlayer() == this.player)
-                        return false;
-                    else if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                    if (board.Pieces[tempFile, tempRank] != null)
                     {
-                        if (tempFile == newFile && tempRank == newRank)
-                            return true;
-                        else return false;
+                        if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                            possibleMoves.Add(new Square(tempFile, tempRank));
+                        break;
                     }
+                    else
+                        possibleMoves.Add(new Square(tempFile, tempRank));
                 }
             }
+            return possibleMoves;
         }
 
         public static void Draw(Vector2 position, Vector2 scale)

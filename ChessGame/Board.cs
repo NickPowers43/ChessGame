@@ -20,6 +20,8 @@ namespace ChessGame
         const int WHITE = 1;
         const int BLACK = 2;
 
+        public bool[] CastlingRights = {true, true};
+
         public const float
             PIECE_TEX_SIZE = 1.0f / 3.0f,
             PIECE_HEIGHT = 2.0f / 8.0f,
@@ -38,9 +40,9 @@ namespace ChessGame
         public static Vector2 boardSize = scale * 8.0f;
 
         int currentPlayer = WHITE;
-        double 
-            player1Time = DEFAULT_TIME_LIMIT,
-            player2Time = DEFAULT_TIME_LIMIT;
+
+        //clock time variables
+        double player1Time = DEFAULT_TIME_LIMIT, player2Time = DEFAULT_TIME_LIMIT;
 
         //last moved piece data
         private Piece lastEatenPiece;
@@ -56,13 +58,16 @@ namespace ChessGame
             }
         }
 
+        //variables for undoLastMove
         public bool undoDone = true;
         public int lastFile, lastRank;
         public int currFile, currRank;
 
+        //variables for heldPiece
         private int heldPieceFile, heldPieceRank;
         private int heldPieceHoverFile, heldPieceHoverRank;
 
+        //heldPiece and property
         private Piece heldPiece;
         public Piece HeldPiece
         {
@@ -76,6 +81,7 @@ namespace ChessGame
             }
         }
 
+        //Piece array and property
         private Piece[,] pieces = new Piece[SIZE, SIZE];
         public Piece[,] Pieces
         {
@@ -84,16 +90,12 @@ namespace ChessGame
                 return pieces;
             }
         }
-
-        //TODO: reset board method
-        //TODO: remove piece
-        //TODO: field to hold currently held piece
-
+        //board no-arg constructor
         public Board()
         {
             setBoard();
         }
-
+        //pick up a piece to heldPiece from the board
         public bool PickupPiece(int file, int rank)
         {
             Piece piece = pieces[file, rank];
@@ -106,15 +108,12 @@ namespace ChessGame
                     heldPieceRank = rank;
 
                     heldPiece = piece;
-                   /* if (heldPiece is Pawn)
-                    {
-                        var list = heldPiece.getPossibleMoves(this);
-                        foreach (Square i in list)
-                            if (i.file == 4 && i.rank == 3)
-                                Console.WriteLine("wow!");
 
-                    }*/
-                    Console.WriteLine("This " + heldPiece.getType() + "has moved " + heldPiece.moved + "times");
+                    var list = heldPiece.getPossibleMoves(this);
+                    foreach (Square i in list)
+                        Console.WriteLine(piece.getPieceType() + "" + getFile(i.file) + "" + (i.rank+1));
+
+                    Console.WriteLine("This " + heldPiece.getPieceType() + "has moved " + heldPiece.moved + "times");
                     pieces[file, rank] = null;
 
                     return true;
@@ -127,27 +126,7 @@ namespace ChessGame
             }
             else return false;
         }
-        public void SetPiece(int file, int rank)
-        {
-            //Console.WriteLine("Setting piece to: " + file + ", " + rank);
-            //check if move is legal
-
-            if (heldPiece != null)
-            {
-                if (heldPiece.isLegal(this, file, rank))
-                {
-                    heldPiece.moved++;
-                    MovePiece(heldPieceFile, heldPieceRank, file, rank);
-
-                    SwapCurrentPlayer();
-                }
-            }
-        }
-        public void HoverPiece(int file, int rank)
-        {
-            heldPieceHoverFile = file;
-            heldPieceHoverRank = rank;
-        }
+        //(re)set the game
         public void setBoard()
         {
             currentPlayer = WHITE;
@@ -188,6 +167,7 @@ namespace ChessGame
             pieces[6, 7] = new Knight(BLACK, 6, 7);
             pieces[7, 7] = new Rook(BLACK, 7, 7);
         }
+        //draw method
         public void Draw()
         {
             DrawTimeBar();
@@ -213,7 +193,11 @@ namespace ChessGame
 
                 }
             }
+
+            if (heldPiece != null)
+                DrawPossibleMoves(heldPieceFile, heldPieceRank, heldPiece);
         }
+        //draw pieces
         private void DrawPiece(int file, int rank, Piece piece)
         {
             if (piece.getPlayer() == 1)
@@ -234,14 +218,30 @@ namespace ChessGame
             else if (piece is Queen)
                 Queen.Draw(bottomLeft + new Vector2(scale.X * file, scale.Y * rank), scale);
         }
-        public void LetGoOfPiece()
+        //highlight squares the heldPiece can move to
+        private void DrawPossibleMoves(int file, int rank, Piece p)
+        {
+            GL.Color4(Color.Green);
+            var possibleMoves = p.getPossibleMoves(this);
+            foreach (Square i in possibleMoves)
+            {
+                GL.Begin(BeginMode.Quads);
+                DrawQuad(bottomLeft + new Vector2(scale.X * i.file, scale.Y * i.rank), scale/8);
+                //DrawDiamond(bottomLeft + new Vector2(scale.X * i.file, scale.Y * i.rank), scale);
+                GL.End();
+            }
+        }
+        //set heldPiece back to null
+        public void ClearHeldPiece()
         {
             heldPiece = null;
         }
+        //return a piece to its original square
         public void ReleasePiece()
         {
             pieces[heldPieceFile, heldPieceRank] = heldPiece;
         }
+        //draw the clocks
         private void DrawTimeBar()
         {
             float x = -1;
@@ -274,6 +274,7 @@ namespace ChessGame
 
             GL.End();
         }
+        //draw the board squares
         private void DrawCheckerBoard()
         {
             GL.Begin(BeginMode.Quads);
@@ -301,10 +302,12 @@ namespace ChessGame
             GL.Vertex2(position + scale);
             GL.Vertex2(position + new Vector2(scale.X, 0));
         }
+        //change the player at turn
         public void SwapCurrentPlayer()
         {
             currentPlayer = 3 - currentPlayer;
         }
+        //decrement the clock
         public void SubtractTime(double time)
         {
             if (currentPlayer == 1)
@@ -316,28 +319,49 @@ namespace ChessGame
                 player2Time -= time;
             }
         }
+        //reset clock times
         public void ResetTimes()
         {
             player1Time = DEFAULT_TIME_LIMIT;
             player2Time = DEFAULT_TIME_LIMIT;
         }
-
-        private void MovePiece(int file, int rank, int newFile, int newRank)
+        //promote pawns
+        public void PromotePawns()
         {
-            undoDone = false;
-            lastEatenPiece = pieces[newFile, newRank];
-            currFile = newFile;
-            currRank = newRank;
-            lastFile = file;
-            lastRank = rank;
-            pieces[newFile, newRank] = heldPiece;
-            pieces[file, rank] = null;
-            LetGoOfPiece();
-
-            if (pieces[newFile, newRank] is King)
-                setBoard();
+            for(int file = 0; file < SIZE; file++)
+            {
+                if (Pieces[file, 0] is Pawn)
+                    Pieces[file, 0] = new Queen(2, file, 0);
+                if (Pieces[file, 7] is Pawn)
+                    Pieces[file, 7] = new Queen(1, file, 7);
+            }
         }
-      
+        //determine if a player is in check
+        public void checkState()
+        {
+            for (int file = 0; file < SIZE; file++)
+            {
+                for (int rank = 0; rank < SIZE; rank++)
+                {
+                    Piece p = pieces[file, rank];
+                    if (p != null)
+                    {
+                        if (p.getPlayer() == currentPlayer)
+                        {
+                            var possibleMoves = p.getPossibleMoves(this);
+                            foreach (Square i in possibleMoves)
+                            {
+                                Piece p2 = pieces[i.file, i.rank];
+                                if (p2 != null)
+                                    if (p2.getPlayer() != currentPlayer && p2 is King)
+                                        Console.WriteLine("Check!");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //execute legal move
         private void SetHeldPiece(int file, int rank)
         {
             if (heldPiece != null)
@@ -351,7 +375,31 @@ namespace ChessGame
                 pieces[file, rank] = heldPiece;
                 pieces[file, rank].file = file;
                 pieces[file, rank].rank = rank;
-                LetGoOfPiece();
+                if (heldPiece is King)
+                {
+                    if (CastlingRights[currentPlayer - 1])
+                    {
+                        {
+                            if (file == 2) //queenside
+                            {
+                                pieces[3, rank] = pieces[0, rank];
+                                pieces[3, rank].file = 3;
+                                pieces[0, rank] = null;
+                            }
+                            if (file == 6) //kingside
+                            {
+                                pieces[5, rank] = pieces[7, rank];
+                                pieces[5, rank].file = 5;
+                                pieces[7, rank] = null;
+                            }
+                        }
+                    }
+                    else CastlingRights[currentPlayer - 1] = false;
+                }
+
+                ClearHeldPiece();
+                checkState();
+                PromotePawns();
                 SwapCurrentPlayer();
             }
             else
@@ -359,6 +407,7 @@ namespace ChessGame
                 Console.WriteLine("there is no held piece to set");
             }
         }
+        //determine what happens on a mouse click
         public void OnClick(int file, int rank)
         {
             if (heldPiece == null)
@@ -368,7 +417,7 @@ namespace ChessGame
             }
             else
             {
-                if (heldPiece.isLegal(this, file, rank))
+                if (heldPiece.isLegalMove(this, file, rank))
                 {
                     SetHeldPiece(file, rank);
                     pieces[file, rank].moved++;
@@ -377,16 +426,18 @@ namespace ChessGame
                 else
                 {
                     ReleasePiece();
-                    LetGoOfPiece();
+                    ClearHeldPiece();
                     Console.Beep();
                 }
             }
         }
+        //set heldPiece rank and file values
         public void OnHover(int file, int rank)
         {
             heldPieceHoverFile = file;
             heldPieceHoverRank = rank;
         }
+        //undo the previous turn
         public void UndoLastMove()
         {
             if (!undoDone)
@@ -405,22 +456,20 @@ namespace ChessGame
                 SwapCurrentPlayer(); 
             }
         }
-
+        //return the current move as a string
         public string DisplayNotation(int file, int rank)
         {
             string Notation = "";
             if (pieces[file, rank] != null)
             {
-                Notation += (pieces[file, rank].getType() + " to " + getFile(file) + (rank+1));
+                Notation += (pieces[file, rank].getPieceType() + " to " + getFile(file) + (rank+1));
             }
             return Notation;
         }
-
+        //convert file index into a-h notation
         public static char getFile(int file)
         {
             return (char)(97 + file);
         }
-
-
     }
 }

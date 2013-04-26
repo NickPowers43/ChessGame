@@ -18,79 +18,70 @@ namespace ChessGame
             type = "King";
         }
 
-        //check if the move is legal
-        public override bool isLegal(Board board, int newFile, int newRank)
+        //get list of possible moves
+        public override List<Square> getPossibleMoves(Board board)
         {
-            if (newFile == file & newRank == rank)
-                return false;
+            var possibleMoves = new List<Square>();
 
-            int tempFile;
-            int tempRank;
+            int[,] offsets = { { -1, 1 }, { 0, 1 }, { 1, 1 }, 
+                             { -1, 0 }, { 1, 0 }, { -1, -1 }, 
+                             { 0, -1 }, { 1, -1 } };
 
-            int[,] offsets = { { 0, 1 }, { 0, -1 }, { -1, 1 }, { 1, 1 }, {1, -1}, {-1, -1}, {1, 0}, {-1, 0} };
-
-            //normal king move
+            int tempFile, tempRank;
+            if (moved == 0)
+            {
+                //queenside castle
+                if (board.Pieces[0, rank] != null)
+                {
+                    if (board.Pieces[0, rank].moved == 0)
+                    {
+                        for (int i = file; i > 0; --i)
+                        {
+                            if (board.Pieces[i, rank] != null)
+                                break;
+                            if (i == 1)
+                                possibleMoves.Add(new Square(2, rank));
+                        }
+                    }
+                }
+                //kingside castle
+                if (board.Pieces[7, rank] != null)
+                {
+                    if (board.Pieces[7, rank].moved == 0)
+                    {
+                        for (int i = file; i < 7; ++i)
+                        {
+                            if (board.Pieces[i, rank] != null)
+                                break;
+                            if (i == 6)
+                                possibleMoves.Add(new Square(6, rank));
+                        }
+                    }
+                }
+            }
+            //normal moves
             for (int i = 0; i < offsets.GetLength(0); i++)
             {
+
                 tempFile = file;
                 tempRank = rank;
+
                 tempFile += offsets[i, 0];
                 tempRank += offsets[i, 1];
-                if (tempFile == newFile && tempRank == newRank)
-                {
-                    if (board.Pieces[newFile, newRank] == null)
-                        return true;
-                    else
-                        if (board.Pieces[newFile, newRank].getPlayer() != player)
-                            return true;
-                        else 
-                            return false;
-                }
-            }
 
-            //castling for white
-            if (player == 1 && newRank == rank && (newFile == 2 || newFile == 6)) 
-            {
-                if (newFile == 2 && board.Pieces[1, 0] == null && board.Pieces[2, 0] == null &&
-                    board.Pieces[3, 0] == null && moved == 0 && board.Pieces[0, 0].moved == 0)
-                {
-                    board.Pieces[3, 0] = board.Pieces[0,0];
-                    board.Pieces[3, 0].file = 3;
-                    board.Pieces[0, 0] = null;
-                    return true;
-                }
-                if (newFile == 6 && board.Pieces[5, 0] == null && board.Pieces[6, 0] == null &&
-                    moved == 0 && board.Pieces[7, 0].moved == 0)
-                {
-                    board.Pieces[5, 0] = board.Pieces[7,0];
-                    board.Pieces[5, 0].file = 5;
-                    board.Pieces[7, 0] = null;
-                    return true;
-                }
-            }
+                if (!inBounds(tempFile, tempRank))
+                    continue;
 
-            //castling for black
-            if (player == 2 && newRank == rank && (newFile == 2 || newFile == 6))
-            {
-                if (newFile == 2 && board.Pieces[1, 7] == null && board.Pieces[2, 7] == null &&
-                    board.Pieces[3, 7] == null && moved == 0 && board.Pieces[0, 7].moved == 0)
+                if (board.Pieces[tempFile, tempRank] != null)
                 {
-                    board.Pieces[3, 7] = board.Pieces[0, 7];
-                    board.Pieces[3, 0].file = 3;
-                    board.Pieces[0, 7] = null;
-                    return true;
+                    if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                        possibleMoves.Add(new Square(tempFile, tempRank));
+                    else continue;
                 }
-                if (newFile == 6 && board.Pieces[5, 7] == null && board.Pieces[6, 7] == null &&
-                    moved == 0 && board.Pieces[7, 7].moved == 0)
-                {
-                    board.Pieces[5, 7] = board.Pieces[7, 7];
-                    board.Pieces[5, 0].file = 5;
-                    board.Pieces[7, 7] = null;
-                    return true;
-                }
+                else
+                    possibleMoves.Add(new Square(tempFile, tempRank));
             }
-
-            return false;
+            return possibleMoves;
         }
 
         public static void Draw(Vector2 position, Vector2 scale)
