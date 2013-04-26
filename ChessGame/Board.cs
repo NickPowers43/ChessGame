@@ -20,6 +20,19 @@ namespace ChessGame
         const int WHITE = 1;
         const int BLACK = 2;
 
+        private bool gameOver = false;
+        public bool GameOver
+        {
+            get
+            {
+                return gameOver;
+            }
+            set
+            {
+                gameOver = value;
+            }
+        }
+
         public bool[] CastlingRights = {true, true};
 
         public const float
@@ -106,16 +119,8 @@ namespace ChessGame
                 {
                     heldPieceFile = file;
                     heldPieceRank = rank;
-
                     heldPiece = piece;
-
-                    var list = heldPiece.getPossibleMoves(this);
-                    foreach (Square i in list)
-                        Console.WriteLine(piece.getPieceType() + "" + getFile(i.file) + "" + (i.rank+1));
-
-                    Console.WriteLine("This " + heldPiece.getPieceType() + "has moved " + heldPiece.moved + "times");
                     pieces[file, rank] = null;
-
                     return true;
                 }
                 else
@@ -227,7 +232,6 @@ namespace ChessGame
             {
                 GL.Begin(BeginMode.Quads);
                 DrawQuad(bottomLeft + new Vector2(scale.X * i.file, scale.Y * i.rank), scale/8);
-                //DrawDiamond(bottomLeft + new Vector2(scale.X * i.file, scale.Y * i.rank), scale);
                 GL.End();
             }
         }
@@ -274,7 +278,7 @@ namespace ChessGame
 
             GL.End();
         }
-        //draw the board squares
+        //draw the whole board
         private void DrawCheckerBoard()
         {
             GL.Begin(BeginMode.Quads);
@@ -295,6 +299,7 @@ namespace ChessGame
             }
             GL.End();
         }
+        //draw a board square
         private void DrawQuad(Vector2 position, Vector2 scale)
         {
             GL.Vertex2(position);
@@ -310,13 +315,16 @@ namespace ChessGame
         //decrement the clock
         public void SubtractTime(double time)
         {
-            if (currentPlayer == 1)
+            if (!gameOver)
             {
-                player1Time -= time;
-            }
-            else
-            {
-                player2Time -= time;
+                if (currentPlayer == 1)
+                {
+                    player1Time -= time;
+                }
+                else
+                {
+                    player2Time -= time;
+                }
             }
         }
         //reset clock times
@@ -401,6 +409,11 @@ namespace ChessGame
                 checkState();
                 PromotePawns();
                 SwapCurrentPlayer();
+                if (lastEatenPiece is King)
+                {
+                    Console.Beep(600, 500);
+                    gameOver = true;
+                }
             }
             else
             {
@@ -410,24 +423,27 @@ namespace ChessGame
         //determine what happens on a mouse click
         public void OnClick(int file, int rank)
         {
-            if (heldPiece == null)
+            if (!gameOver)
             {
-                PickupPiece(file, rank);
- 
-            }
-            else
-            {
-                if (heldPiece.isLegalMove(this, file, rank))
+                if (heldPiece == null)
                 {
-                    SetHeldPiece(file, rank);
-                    pieces[file, rank].moved++;
-                    Console.WriteLine(DisplayNotation(file, rank));
+                    PickupPiece(file, rank);
+
                 }
                 else
                 {
-                    ReleasePiece();
-                    ClearHeldPiece();
-                    Console.Beep();
+                    if (heldPiece.isLegalMove(this, file, rank))
+                    {
+                        SetHeldPiece(file, rank);
+                        pieces[file, rank].moved++;
+                        Console.WriteLine(DisplayNotation(file, rank));
+                    }
+                    else
+                    {
+                        ReleasePiece();
+                        ClearHeldPiece();
+                        Console.Beep();
+                    }
                 }
             }
         }
