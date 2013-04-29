@@ -12,14 +12,14 @@ namespace ChessGame
     class King : Piece
     {
         //3 arg constructor for King
-        public King(int player, int file, int rank)
-            : base(player, file, rank)
+        public King(int player) : base(player)
         {
             type = "King";
+            pieceChar = 'k';
         }
 
         //get list of possible moves
-        public override List<Square> getPossibleMoves(Board board)
+        public override List<Square> getPossibleMoves(Board board, Square s)
         {
             var possibleMoves = new List<Square>();
 
@@ -31,30 +31,30 @@ namespace ChessGame
             if (moved == 0)
             {
                 //queenside castle
-                if (board.Pieces[0, rank] != null)
+                if (!board.Square[0, s.rank].isEmpty())
                 {
-                    if (board.Pieces[0, rank].moved == 0)
+                    if (board.Square[0, s.rank].Piece.moved == 0)
                     {
-                        for (int i = file; i > 0; --i)
+                        for (int i = 4; i > 0; --i)
                         {
-                            if (board.Pieces[i, rank] != null)
+                            if (!board.Square[i, s.rank].isEmpty())
                                 break;
                             if (i == 1)
-                                possibleMoves.Add(new Square(2, rank));
+                                possibleMoves.Add(new Square(2, s.rank));
                         }
                     }
                 }
                 //kingside castle
-                if (board.Pieces[7, rank] != null)
+                if (!board.Square[7, s.rank].isEmpty())
                 {
-                    if (board.Pieces[7, rank].moved == 0)
+                    if (board.Square[7, s.rank].Piece.moved == 0)
                     {
-                        for (int i = file; i < 7; ++i)
+                        for (int i = 4; i < 7; ++i)
                         {
-                            if (board.Pieces[i, rank] != null)
+                            if (!board.Square[i, s.rank].isEmpty())
                                 break;
                             if (i == 6)
-                                possibleMoves.Add(new Square(6, rank));
+                                possibleMoves.Add(new Square(6, s.rank));
                         }
                     }
                 }
@@ -63,8 +63,8 @@ namespace ChessGame
             for (int i = 0; i < offsets.GetLength(0); i++)
             {
 
-                tempFile = file;
-                tempRank = rank;
+                tempFile = s.file;
+                tempRank = s.rank;
 
                 tempFile += offsets[i, 0];
                 tempRank += offsets[i, 1];
@@ -72,9 +72,9 @@ namespace ChessGame
                 if (!inBounds(tempFile, tempRank))
                     continue;
 
-                if (board.Pieces[tempFile, tempRank] != null)
+                if (!board.Square[tempFile, tempRank].isEmpty())
                 {
-                    if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                    if (board.Square[tempFile, tempRank].Piece.getPlayer() != player)
                         possibleMoves.Add(new Square(tempFile, tempRank));
                     else continue;
                 }

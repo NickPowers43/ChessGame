@@ -12,14 +12,14 @@ namespace ChessGame
     class Pawn : Piece
     {
         //3 arg Pawn constructor
-        public Pawn(int player, int file, int rank)
-            : base(player, file, rank)
+        public Pawn(int player) : base(player)
         {
             type = "Pawn";
+            pieceChar = 'p';
         }
 
         //get list of possible moves
-        public override List<Square> getPossibleMoves(Board board){
+        public override List<Square> getPossibleMoves(Board board, Square s){
             var possibleMoves = new List<Square>();
             int[,] offsets = { { -1, 1 }, { 1, 1 }, { 0, 1 }, { 0, 2 } };
             int tempFile, tempRank;
@@ -28,8 +28,8 @@ namespace ChessGame
                 if (offsets[i, 1] == 2 && moved > 0)
                     continue;
 
-                tempFile = file;
-                tempRank = rank;
+                tempFile = s.file;
+                tempRank = s.rank;
 
                 if (player == WHITE){
                     tempFile += offsets[i, 0];
@@ -42,15 +42,15 @@ namespace ChessGame
                 if (!inBounds(tempFile, tempRank))
                     continue;
 
-                if (tempFile == file)
+                if (tempFile == s.file)
                 {
-                    if (board.Pieces[tempFile, tempRank] == null)
+                    if (board.Square[tempFile, tempRank].isEmpty())
                         possibleMoves.Add(new Square(tempFile, tempRank));
                     else break;
                 }
-                else if(tempFile != file && board.Pieces[tempFile,tempRank] != null)
+                else if(tempFile != s.file && !board.Square[tempFile,tempRank].isEmpty())
                 {
-                     if(board.Pieces[tempFile,tempRank].getPlayer() != player)
+                     if(board.Square[tempFile,tempRank].Piece.getPlayer() != player)
                         possibleMoves.Add(new Square(tempFile, tempRank));
                      else continue;
                 }

@@ -14,7 +14,7 @@ namespace ChessGame
     {
         public const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 
-        private bool paused = true, prevSpace = false;
+        private bool paused = true, prevSpace = false, prevZ = false;
         
         private bool prevMouseButton = false;
         private Board board;
@@ -55,13 +55,13 @@ namespace ChessGame
             if(!paused)
                 board.SubtractTime(time);
 
-            if (keyboard[Key.Z])
+            if (keyboard[Key.Z] & keyboard[Key.Z] != prevZ)
             {
                 board.UndoLastMove();
             }
             if (keyboard[Key.R])
             {
-                board.setBoard();
+                board.SetBoard();
                 board.GameOver = false;
             }
             if (keyboard[Key.Space] & keyboard[Key.Space] != prevSpace)
@@ -80,6 +80,7 @@ namespace ChessGame
 
             prevMouseButton = mouse[MOUSE0];
             prevSpace = keyboard[Key.Space];
+            prevZ = keyboard[Key.Z];
         }
 
         public void Render()

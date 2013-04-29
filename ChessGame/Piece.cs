@@ -15,21 +15,18 @@ namespace ChessGame
         public const int BLACK = 2;
 
         public string type;
-        public int rank;
-        public int file;
+        public char pieceChar;
         public int player;
         public int moved = 0;
 
         //3-arg Piece constructor
-        public Piece(int player, int file, int rank)
+        public Piece(int player)
         {
             this.player = player;
-            this.file = file;
-            this.rank = rank;
         }
 
         //return a list of all possible moves for a piece
-        public abstract List<Square> getPossibleMoves(Board board);
+        public abstract List<Square> getPossibleMoves(Board board, Square s);
 
         //check to make sure the piece stays on the board
         public bool inBounds(int file, int rank)
@@ -40,11 +37,11 @@ namespace ChessGame
         }
 
         //determine if a move is legal
-        public bool isLegalMove(Board board, int newFile, int newRank)
+        public bool isLegalMove(Board board, int file, int rank, Square s)
         {
-            var possibleMoves = getPossibleMoves(board);
+            var possibleMoves = getPossibleMoves(board, s);
             foreach (Square i in possibleMoves)
-                if (newFile == i.file && newRank == i.rank)
+                if (file == i.file && rank == i.rank)
                     return true;
             return false;
         }
@@ -59,6 +56,11 @@ namespace ChessGame
         public String getPieceType()
         {
             return type;
+        }
+
+        public char getPieceChar()
+        {
+            return pieceChar;
         }
     }
 }

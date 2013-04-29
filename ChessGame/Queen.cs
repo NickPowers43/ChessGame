@@ -12,14 +12,14 @@ namespace ChessGame
     class Queen : Piece
     {
         //3-arg Queen constructor
-        public Queen(int player, int file, int rank)
-            : base(player, file, rank) 
+        public Queen(int player): base(player) 
         {
             type = "Queen";
+            pieceChar = 'q';
         }
 
         //get list of possible moves
-        public override List<Square> getPossibleMoves(Board board)
+        public override List<Square> getPossibleMoves(Board board, Square s)
         {
             var possibleMoves = new List<Square>();
             int[,] offsets = { { -1, 1 }, { 0, 1 }, { 1, 1 }, 
@@ -29,8 +29,8 @@ namespace ChessGame
             int tempFile, tempRank;
             for (int i = 0; i < offsets.GetLength(0); i++)
             {
-                tempFile = file;
-                tempRank = rank;
+                tempFile = s.file;
+                tempRank = s.rank;
                 for (int j = 0; j < 8; j++)
                 {
                     tempFile += offsets[i, 0];
@@ -39,9 +39,9 @@ namespace ChessGame
                     if (!inBounds(tempFile, tempRank))
                         break;
 
-                    if (board.Pieces[tempFile, tempRank] != null)
+                    if (!board.Square[tempFile, tempRank].isEmpty())
                     {
-                        if (board.Pieces[tempFile, tempRank].getPlayer() != player)
+                        if (board.Square[tempFile, tempRank].Piece.getPlayer() != player)
                             possibleMoves.Add(new Square(tempFile, tempRank));
                         break;
                     }

@@ -20,6 +20,8 @@ namespace ChessGame
         const int WHITE = 1;
         const int BLACK = 2;
 
+        Stack<string> moves = new Stack<String>();
+
         private bool gameOver = false;
         public bool GameOver
         {
@@ -94,33 +96,40 @@ namespace ChessGame
             }
         }
 
-        //Piece array and property
-        private Piece[,] pieces = new Piece[SIZE, SIZE];
-        public Piece[,] Pieces
+        //Square array and property
+        private Square[,] square = new Square[SIZE, SIZE];
+        public Square[,] Square
         {
             get
             {
-                return pieces;
+                return square;
+            }
+            set 
+            {
+                square = value;
             }
         }
+
         //board no-arg constructor
         public Board()
         {
-            setBoard();
+            InitializeSquares();
+            SetBoard();
         }
-        //pick up a piece to heldPiece from the board
+        //pick up a piece to heldPiece from the board. doesn't need to be a bool, can be void?
         public bool PickupPiece(int file, int rank)
         {
-            Piece piece = pieces[file, rank];
+            
 
-            if (piece != null)
+            if (!square[file, rank].isEmpty()) //&& owner = currentPlayer
             {
+                Piece piece = square[file, rank].Piece;
                 if (piece.getPlayer() == currentPlayer)
                 {
                     heldPieceFile = file;
                     heldPieceRank = rank;
                     heldPiece = piece;
-                    pieces[file, rank] = null;
+                    square[file, rank].Piece = null;
                     return true;
                 }
                 else
@@ -131,8 +140,16 @@ namespace ChessGame
             }
             else return false;
         }
-        //(re)set the game
-        public void setBoard()
+
+        //initialize square array
+        public void InitializeSquares()
+        {
+            for (int file = 0;  file < 8 ; file++)
+                for (int rank = 0; rank < 8; rank++)
+                    Square[file,rank] = new Square(file,rank);
+        }
+        //(re)set the board
+        public void SetBoard()
         {
             currentPlayer = WHITE;
 
@@ -143,34 +160,37 @@ namespace ChessGame
             player1Time = DEFAULT_TIME_LIMIT;
             player2Time = DEFAULT_TIME_LIMIT;
 
+            CastlingRights[0] = true;
+            CastlingRights[1] = true;
+
             //set all squares to null
-            for (int i = 0; i < pieces.GetLength(0); i++)
-                for (int j = 0; j < pieces.GetLength(1); j++)
-                    pieces[i, j] = null;
+            for (int i = 2; i < square.GetLength(0); i++)
+                for (int j = 2; j < 6; j++)
+                  square[i,j].Piece = null;
 
             for (int i = 0; i < 8; i++)
             {
-                pieces[i, 1] = new Pawn(WHITE, i, 1);
-                pieces[i, 6] = new Pawn(BLACK, i, 6);
+                square[i, 1].Piece = new Pawn(WHITE);
+                square[i, 6].Piece = new Pawn(BLACK);
             }
             //white pieces
-            pieces[0, 0] = new Rook(WHITE, 0, 0);
-            pieces[1, 0] = new Knight(WHITE, 1, 0);
-            pieces[2, 0] = new Bishop(WHITE, 2, 0);
-            pieces[3, 0] = new Queen(WHITE, 3, 0);
-            pieces[4, 0] = new King(WHITE, 4, 0);
-            pieces[5, 0] = new Bishop(WHITE, 5, 0);
-            pieces[6, 0] = new Knight(WHITE, 6, 0);
-            pieces[7, 0] = new Rook(WHITE, 7, 0);
-            //black pieces
-            pieces[0, 7] = new Rook(BLACK, 0, 7);
-            pieces[1, 7] = new Knight(BLACK, 1, 7);
-            pieces[2, 7] = new Bishop(BLACK, 2, 7);
-            pieces[3, 7] = new Queen(BLACK, 3, 7);
-            pieces[4, 7] = new King(BLACK, 4, 7);
-            pieces[5, 7] = new Bishop(BLACK, 5, 7);
-            pieces[6, 7] = new Knight(BLACK, 6, 7);
-            pieces[7, 7] = new Rook(BLACK, 7, 7);
+            square[0, 0].Piece = new Rook(WHITE);
+            square[1, 0].Piece = new Knight(WHITE);
+            square[2, 0].Piece = new Bishop(WHITE);
+            square[3, 0].Piece = new Queen(WHITE);
+            square[4, 0].Piece = new King(WHITE);
+            square[5, 0].Piece = new Bishop(WHITE);
+            square[6, 0].Piece = new Knight(WHITE);
+            square[7, 0].Piece = new Rook(WHITE);
+            //black square
+            square[0, 7].Piece = new Rook(BLACK);
+            square[1, 7].Piece = new Knight(BLACK);
+            square[2, 7].Piece = new Bishop(BLACK);
+            square[3, 7].Piece = new Queen(BLACK);
+            square[4, 7].Piece = new King(BLACK);
+            square[5, 7].Piece = new Bishop(BLACK);
+            square[6, 7].Piece = new Knight(BLACK);
+            square[7, 7].Piece = new Rook(BLACK);
         }
         //draw method
         public void Draw()
@@ -189,7 +209,7 @@ namespace ChessGame
                         DrawPiece(file, rank, heldPiece);
                     else
                     {
-                        Piece temp = pieces[file, rank];
+                        Piece temp = Square[file, rank].Piece;
 
                         if (temp != null)
                             DrawPiece(file, rank, temp);
@@ -227,7 +247,7 @@ namespace ChessGame
         private void DrawPossibleMoves(int file, int rank, Piece p)
         {
             GL.Color4(Color.Green);
-            var possibleMoves = p.getPossibleMoves(this);
+            var possibleMoves = p.getPossibleMoves(this, Square[file, rank]);
             foreach (Square i in possibleMoves)
             {
                 GL.Begin(BeginMode.Quads);
@@ -243,7 +263,7 @@ namespace ChessGame
         //return a piece to its original square
         public void ReleasePiece()
         {
-            pieces[heldPieceFile, heldPieceRank] = heldPiece;
+            Square[heldPieceFile, heldPieceRank].Piece = heldPiece;
         }
         //draw the clocks
         private void DrawTimeBar()
@@ -338,51 +358,58 @@ namespace ChessGame
         {
             for(int file = 0; file < SIZE; file++)
             {
-                if (Pieces[file, 0] is Pawn)
-                    Pieces[file, 0] = new Queen(2, file, 0);
-                if (Pieces[file, 7] is Pawn)
-                    Pieces[file, 7] = new Queen(1, file, 7);
+                if (Square[file, 0].Piece is Pawn)
+                    Square[file, 0].Piece = new Queen(BLACK);
+                if (Square[file, 7].Piece is Pawn)
+                    Square[file, 7].Piece = new Queen(WHITE);
             }
         }
         //determine if a player is in check
-        public void checkState()
+        public bool CheckState()
         {
             for (int file = 0; file < SIZE; file++)
             {
                 for (int rank = 0; rank < SIZE; rank++)
                 {
-                    Piece p = pieces[file, rank];
-                    if (p != null)
+                    if (!square[file, rank].isEmpty())
                     {
+                    Piece p = square[file, rank].Piece;
+                    
                         if (p.getPlayer() == currentPlayer)
                         {
-                            var possibleMoves = p.getPossibleMoves(this);
+                            var possibleMoves = p.getPossibleMoves(this, square[file, rank]);
                             foreach (Square i in possibleMoves)
                             {
-                                Piece p2 = pieces[i.file, i.rank];
-                                if (p2 != null)
+
+                                if (!square[i.file, i.rank].isEmpty())
+                                {
+                                    Piece p2 = square[i.file, i.rank].Piece;
                                     if (p2.getPlayer() != currentPlayer && p2 is King)
+                                    {
                                         Console.WriteLine("Check!");
+                                        return true;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+            return false;
         }
         //execute legal move
         private void SetHeldPiece(int file, int rank)
         {
             if (heldPiece != null)
             {
+                Console.WriteLine(DisplayNotation(file, rank));
                 undoDone = false;
                 currFile = file;
                 currRank = rank;
                 lastFile = heldPieceFile;
                 lastRank = heldPieceRank;
-                lastEatenPiece = pieces[file, rank];
-                pieces[file, rank] = heldPiece;
-                pieces[file, rank].file = file;
-                pieces[file, rank].rank = rank;
+                lastEatenPiece = square[file, rank].Piece;
+                square[file, rank].Piece = heldPiece;
                 if (heldPiece is King)
                 {
                     if (CastlingRights[currentPlayer - 1])
@@ -390,30 +417,30 @@ namespace ChessGame
                         {
                             if (file == 2) //queenside
                             {
-                                pieces[3, rank] = pieces[0, rank];
-                                pieces[3, rank].file = 3;
-                                pieces[0, rank] = null;
+                                square[3, rank].Piece = square[0, rank].Piece;
+                                square[0, rank].Piece = null;
                             }
                             if (file == 6) //kingside
                             {
-                                pieces[5, rank] = pieces[7, rank];
-                                pieces[5, rank].file = 5;
-                                pieces[7, rank] = null;
+                                square[5, rank].Piece = square[7, rank].Piece;
+                                square[7, rank].Piece = null;
                             }
                         }
                     }
                     else CastlingRights[currentPlayer - 1] = false;
                 }
-
                 ClearHeldPiece();
-                checkState();
-                PromotePawns();
-                SwapCurrentPlayer();
+                PromotePawns();                 
+                square[file, rank].Piece.moved++;
                 if (lastEatenPiece is King)
                 {
                     Console.Beep(600, 500);
+                    Console.WriteLine(GetCurrentPlayer() + " wins!");
                     gameOver = true;
                 }
+                SwapCurrentPlayer();
+                if (CheckState())
+                    UndoLastMove();
             }
             else
             {
@@ -427,19 +454,19 @@ namespace ChessGame
             {
                 if (heldPiece == null)
                 {
+                    moves.Push(boardToFen());
                     PickupPiece(file, rank);
 
                 }
                 else
                 {
-                    if (heldPiece.isLegalMove(this, file, rank))
+                    if (heldPiece.isLegalMove(this, file, rank, square[heldPieceFile, heldPieceRank]))
                     {
                         SetHeldPiece(file, rank);
-                        pieces[file, rank].moved++;
-                        Console.WriteLine(DisplayNotation(file, rank));
                     }
                     else
                     {
+                        moves.Pop();
                         ReleasePiece();
                         ClearHeldPiece();
                         Console.Beep();
@@ -456,36 +483,144 @@ namespace ChessGame
         //undo the previous turn
         public void UndoLastMove()
         {
-            if (!undoDone)
+            if (moves.Count > 0)
+            {
+                fenToBoard(moves.Pop());
+                SwapCurrentPlayer();
+            }
+
+            /*if (!undoDone)
             {
                 undoDone = true;
-                Pieces[lastFile, lastRank] = Pieces[currFile, currRank];
-                Pieces[lastFile, lastRank].file = lastFile;
-                Pieces[lastFile, lastRank].rank = lastRank;
-                Pieces[lastFile, lastRank].moved--;
-                Pieces[currFile, currRank] = lastEatenPiece;
-                if (lastEatenPiece != null)
-                {
-                    lastEatenPiece.file = currFile;
-                    lastEatenPiece.rank = currRank;
-                }
+                square[lastFile, lastRank].Piece = square[currFile, currRank].Piece;
+                square[lastFile, lastRank].Piece.moved--;
+                square[currFile, currRank].Piece = lastEatenPiece;
                 SwapCurrentPlayer(); 
-            }
+            }*/
         }
         //return the current move as a string
         public string DisplayNotation(int file, int rank)
         {
-            string Notation = "";
-            if (pieces[file, rank] != null)
-            {
-                Notation += (pieces[file, rank].getPieceType() + " to " + getFile(file) + (rank+1));
-            }
+            string Notation = heldPiece.getPieceType();
+            Notation += ((Square[file, rank].isEmpty()) ? " to " : " takes ");
+            Notation += getFile(file) + "" + (rank+1);
             return Notation;
         }
         //convert file index into a-h notation
         public static char getFile(int file)
         {
             return (char)(97 + file);
+        }
+        //return the current player as a string
+        public string GetCurrentPlayer()
+        {
+            if (currentPlayer == 1)
+                return "White";
+            return "Black";
+        }
+
+        public void ClearBoard()
+        {
+            for (int file = 0; file < SIZE; file++)
+                for (int rank = 0; rank < SIZE; rank++)
+                    square[file, rank].Piece = null;
+        }
+
+        public string boardToFen()
+        {
+            string fen = "";
+            int blank;
+            for (int rank = 7; rank >= 0; rank--)
+            {
+                for (int file = 0; file < SIZE; file++)
+                {
+                    blank = 0;
+                    if (square[file, rank].isEmpty())
+                    {
+                        blank++;
+                        while (file < 7)
+                        {
+                            file++;
+                            if (!square[file, rank].isEmpty())
+                            {
+                                file--;
+                                break;
+                            }
+                            blank++;
+                        }
+                        fen += blank;
+                        continue;
+                    }
+                    char piece = square[file, rank].Piece.getPieceChar();
+                    fen += (square[file, rank].Piece.getPlayer() == 1) ? Char.ToUpper(piece) : Char.ToLower(piece);
+                }
+            }
+            Console.WriteLine(fen);
+            return fen;
+        }
+
+        public void fenToBoard(string fen)
+        {
+            ClearBoard();
+            char[] fenArray = fen.ToCharArray();
+            for (int i = 0, file = 0, rank = 7; i < fenArray.Length; i++)
+            {
+                Console.WriteLine(i + ": " + fenArray[i]);
+                if(file > 7) 
+                {
+                    file = 0;
+                    rank--;
+                }
+                if(Char.IsDigit(fenArray[i]))
+                    for(int j=0; j<Char.GetNumericValue(fenArray[i]);j++)
+                    {
+                        if (file > 7)
+                            break;
+                        Console.WriteLine(file + "," + rank + " = " + getPiece(fenArray[i]));
+                        square[file,rank].Piece = null;
+                        file++;
+                    }
+                else if (Char.IsLetter(fenArray[i]))
+                {
+                    square[file, rank].Piece = getPiece(fenArray[i]);
+                    Console.WriteLine(file + "," + rank + " = " + getPiece(fenArray[i]));
+                    file++;
+                }
+            }
+
+        }
+
+        public Piece getPiece(char p)
+        {
+            switch (p)
+            {
+                case 'p':
+                    return new Pawn(BLACK);
+                case 'r':
+                    return new Rook(BLACK);
+                case 'n':
+                    return new Knight(BLACK);   
+                case 'b':
+                    return new Bishop(BLACK);                    
+                case 'q':
+                    return new Queen(BLACK);                    
+                case 'k':
+                    return new King(BLACK);                    
+                case 'P':
+                    return new Pawn(WHITE);                   
+                case 'R':
+                    return new Rook(WHITE);                    
+                case 'N':
+                    return new Knight(WHITE);                    
+                case 'B':
+                    return new Bishop(WHITE);                    
+                case 'Q':
+                    return new Queen(WHITE);                    
+                case 'K':
+                    return new King(WHITE);
+                default:
+                    return null;
+            }
         }
     }
 }
